@@ -3,15 +3,14 @@
 /**************************************************************************************************/
 /* SequenceNo: 10                                                                                 */
 /* Description: HJELPETABELL: Finn nye rader i triggertabell dfo_egenfinansiering og insert diss  */
-/* Description: e inn i en help_table_1 for videre behandling                                     */
+/* Description: e inn i en HLPGRUNNLAG for videre behandling                                      */
 /* Type: B                                                                                        */
 /* Commit_flag: N                                                                                 */
 /* Exit_from: S                                                                                   */
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-SELECT * INTO $*help_table_1 FROM dfo_egenfinansiering WHERE client='$client' AND step=0
-
+SELECT * INTO $*HLPGRUNNLAG FROM dfo_egenfinansiering WHERE client='$client' AND step=0
 
 /**************************************************************************************************/
 /* SequenceNo: 11                                                                                 */
@@ -25,10 +24,9 @@ SELECT * INTO $*help_table_1 FROM dfo_egenfinansiering WHERE client='$client' AN
 
 UPDATE dfo_egenfinansiering SET step=1,last_update=GETDATE() WHERE client='$client' AND step=0
 
-
 /**************************************************************************************************/
 /* SequenceNo: 20                                                                                 */
-/* Description: FILTER: Luk ut rader fra help_table_1 som ikke har delprosjekt i dim_5, plasser   */
+/* Description: FILTER: Luk ut rader fra HLPGRUNNLAG som ikke har delprosjekt i dim_5, plasser    */
 /* Description: først i hjelpetabell for å oppdatere status                                       */
 /* Type: B                                                                                        */
 /* Commit_flag: N                                                                                 */
@@ -36,19 +34,19 @@ UPDATE dfo_egenfinansiering SET step=1,last_update=GETDATE() WHERE client='$clie
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-SELECT * INTO $*help_table_3 FROM $*help_table_1 WHERE att_5_id<>'BF' AND dim_5=''
+SELECT * INTO $*HLP01DIM5 FROM $*HLPGRUNNLAG WHERE att_5_id<>'BF' AND dim_5=''
 
 /**************************************************************************************************/
 /* SequenceNo: 21                                                                                 */
-/* Description: FILTER: Luk ut rader fra help_table_1 som ikke har delprosjekt i dim_5, slett fr  */
-/* Description: a help_table_1                                                                    */
+/* Description: FILTER: Luk ut rader fra HLPGRUNNLAG som ikke har delprosjekt i dim_5, slett fr   */
+/* Description: a HLPGRUNNLAG                                                                     */
 /* Type: B                                                                                        */
 /* Commit_flag: N                                                                                 */
 /* Exit_from: S                                                                                   */
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-DELETE FROM $*help_table_1 WHERE att_5_id<>'BF' OR dim_5=''
+DELETE FROM $*HLPGRUNNLAG WHERE att_5_id<>'BF' OR dim_5=''
 
 /**************************************************************************************************/
 /* SequenceNo: 22                                                                                 */
@@ -60,30 +58,30 @@ DELETE FROM $*help_table_1 WHERE att_5_id<>'BF' OR dim_5=''
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step = 2, dfo_egenfinansiering.last_update=GETDATE() FROM $*help_table_3 WHERE dfo_egenfinansiering.client = $*help_table_3.client AND dfo_egenfinansiering.sequence_no = $*help_table_3.sequence_no AND dfo_egenfinansiering.voucher_no = $*help_table_3.voucher_no
+UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step = 2, dfo_egenfinansiering.last_update=GETDATE() FROM $*HLP01DIM5 WHERE dfo_egenfinansiering.client = $*HLP01DIM5.client AND dfo_egenfinansiering.sequence_no = $*HLP01DIM5.sequence_no AND dfo_egenfinansiering.voucher_no = $*HLP01DIM5.voucher_no
 
 /**************************************************************************************************/
 /* SequenceNo: 30                                                                                 */
-/* Description: FILTER: Luk ut rader fra help_table_1 som ikke har prosjekt av typen bidrag       */
+/* Description: FILTER: Luk ut rader fra HLPGRUNNLAG som ikke har prosjekt av typen bidrag        */
 /* Type: B                                                                                        */
 /* Commit_flag: N                                                                                 */
 /* Exit_from: S                                                                                   */
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-SELECT b.account ,b.amount ,b.apar_id ,b.apar_type ,b.att_1_id ,b.att_2_id ,b.att_3_id ,b.att_4_id ,b.att_5_id ,b.att_6_id ,b.att_7_id ,b.client ,b.cur_amount ,b.currency ,b.dc_flag ,b.description ,b.dim_1 ,b.dim_2 ,b.dim_3 ,b.dim_4 ,b.dim_5 ,b.dim_6 ,b.dim_7 ,b.ext_arch_ref ,b.ext_inv_ref ,b.ext_ref ,b.number_1 ,b.order_id ,b.period ,b.sequence_no ,b.status ,b.tax_code ,b.tax_system ,b.trans_date ,b.value_1 ,b.value_2 ,b.value_3 ,b.voucher_date ,b.voucher_no ,b.voucher_type ,b.step INTO $*help_table_4 FROM $*help_table_1 b LEFT OUTER JOIN atsproject c ON ( b.client = c.client AND b.dim_2 = c.project ) WHERE c.unit_id NOT LIKE 'B%'
+SELECT b.account ,b.amount ,b.apar_id ,b.apar_type ,b.att_1_id ,b.att_2_id ,b.att_3_id ,b.att_4_id ,b.att_5_id ,b.att_6_id ,b.att_7_id ,b.client ,b.cur_amount ,b.currency ,b.dc_flag ,b.description ,b.dim_1 ,b.dim_2 ,b.dim_3 ,b.dim_4 ,b.dim_5 ,b.dim_6 ,b.dim_7 ,b.ext_arch_ref ,b.ext_inv_ref ,b.ext_ref ,b.number_1 ,b.order_id ,b.period ,b.sequence_no ,b.status ,b.tax_code ,b.tax_system ,b.trans_date ,b.value_1 ,b.value_2 ,b.value_3 ,b.voucher_date ,b.voucher_no ,b.voucher_type ,b.step INTO $*HLP02TYPE FROM $*HLPGRUNNLAG b LEFT OUTER JOIN atsproject c ON ( b.client = c.client AND b.dim_2 = c.project ) WHERE c.unit_id NOT LIKE 'B%'
 
 /**************************************************************************************************/
 /* SequenceNo: 31                                                                                 */
-/* Description: FILTER: Luk ut rader fra help_table_1 som ikke har prosjekt av typen bidrag, sle  */
-/* Description: tt fra help_table_1                                                               */
+/* Description: FILTER: Luk ut rader fra HLPGRUNNLAG som ikke har prosjekt av typen bidrag, sle   */
+/* Description: tt fra HLPGRUNNLAG                                                                */
 /* Type: B                                                                                        */
 /* Commit_flag: N                                                                                 */
 /* Exit_from: S                                                                                   */
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-DELETE FROM $*help_table_1 b INNER JOIN atsproject c ON(b.client=c.client AND b.dim_2=c.project) WHERE c.unit_id NOT LIKE 'B%'
+DELETE b FROM $*HLPGRUNNLAG b INNER JOIN atsproject c ON(b.client=c.client AND b.dim_2=c.project) WHERE c.unit_id NOT LIKE 'B%'
 
 /**************************************************************************************************/
 /* SequenceNo: 32                                                                                 */
@@ -95,36 +93,11 @@ DELETE FROM $*help_table_1 b INNER JOIN atsproject c ON(b.client=c.client AND b.
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step = 2,dfo_egenfinansiering.last_update=GETDATE() FROM $*help_table_4 WHERE dfo_egenfinansiering.client = $*help_table_4.client AND dfo_egenfinansiering.sequence_no = $*help_table_4.sequence_no AND dfo_egenfinansiering.voucher_no = $*help_table_4.voucher_no
+UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step = 2,dfo_egenfinansiering.last_update=GETDATE() FROM $*HLP02TYPE WHERE dfo_egenfinansiering.client = $*HLP02TYPE.client AND dfo_egenfinansiering.sequence_no = $*HLP02TYPE.sequence_no AND dfo_egenfinansiering.voucher_no = $*HLP02TYPE.voucher_no
 
 /**************************************************************************************************/
-/* SequenceNo: 50                                                                                 */
-/* Description: FORTABELL: Opprett help_table_2 fra acrbatchinput, merk at sequence_no er identi  */
-/* Description: ty kolonne                                                                        */
-/* Type: B                                                                                        */
-/* Commit_flag: C                                                                                 */
-/* Exit_from: S                                                                                   */
-/* Dialect: Native                                                                                */
-/**************************************************************************************************/
-
-CREATE TABLE $*help_table_2 ( account NVARCHAR(25) NOT NULL, amount DECIMAL(28, 3) NOT NULL, batch_id NVARCHAR(50) NOT NULL, client NVARCHAR(25) NOT NULL, cur_amount DECIMAL(28, 3) NOT NULL, currency NVARCHAR(25) NOT NULL, description NVARCHAR(50) NOT NULL, dim_1 NVARCHAR(25) NOT NULL, dim_2 NVARCHAR(25) NOT NULL, dim_3 NVARCHAR(25) NOT NULL, dim_4 NVARCHAR(25) NOT NULL, dim_5 NVARCHAR(25) NOT NULL, dim_6 NVARCHAR(25) NOT NULL, dim_7 NVARCHAR(25) NOT NULL, ext_inv_ref NVARCHAR(100) NOT NULL, interface NVARCHAR(255) NOT NULL, period INT NOT NULL, sequence_no INT identity, tax_code NVARCHAR(50) NOT NULL DEFAULT '0', trans_date DATETIME NOT NULL DEFAULT(GETDATE()), trans_type NVARCHAR(4) NOT NULL, voucher_date DATETIME NOT NULL DEFAULT(GETDATE()), voucher_type NVARCHAR(50) NOT NULL )
-
-/**************************************************************************************************/
-/* SequenceNo: 55                                                                                 */
-/* Description: BATCHID: Insert fra help_table_1  inn i help_table_2, generer samtidig unik batc  */
-/* Description: hid og sett konto til 9150 egenfinansiering belastet, legg og voucher_no og sequ  */
-/* Description: ence_no inn i ext_inv_ref                                                         */
-/* Type: B                                                                                        */
-/* Commit_flag: N                                                                                 */
-/* Exit_from: S                                                                                   */
-/* Dialect: Native                                                                                */
-/**************************************************************************************************/
-
-INSERT INTO $*help_table_2 ( account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period, tax_code, trans_date, trans_type, voucher_date, voucher_type ) SELECT '9150', amount, CONCAT ('BT','-',convert(VARCHAR, getdate(), 23),convert(VARCHAR, getdate(), 14)), client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, CONCAT(voucher_no,sequence_no), 'BI', period, '0', trans_date, 'GL', voucher_date, voucher_type FROM $*help_table_1 WHERE 1 = 1
-
-/**************************************************************************************************/
-/* SequenceNo: 60                                                                                 */
-/* Description: BEREGN: FLEX:ANDELSMESSIG&KOSTNADSSPESIFIKK:Oppdater beløp i help_table_2 basert  */
+/* SequenceNo: 40                                                                                 */
+/* Description: BEREGN: FLEX:ANDELSMESSIG&KOSTNADSSPESIFIKK:Oppdater beløp i $*HLPGRUNNLAG basert */
 /* Description:  på beløp i rad og andel i fleksifelt på kontert arbeidsordre                     */
 /* Type: B                                                                                        */
 /* Commit_flag: N                                                                                 */
@@ -132,32 +105,32 @@ INSERT INTO $*help_table_2 ( account, amount, batch_id, client, cur_amount, curr
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-UPDATE $*help_table_2 SET $*help_table_2.amount=a.amount*b.int_funding_fx/100 FROM $*help_table_2 a INNER JOIN afxwofunding1 b ON(b.client=a.client AND attribute_id='BF' AND b.dim_value = a.dim_5)
+UPDATE a SET a.amount=a.amount*b.own_funding_fx/100, a.cur_amount=a.cur_amount*b.own_funding_fx/100 FROM $*HLPGRUNNLAG a INNER JOIN afxaoegenfin b ON(b.client=a.client AND b.attribute_id='BF' AND b.dim_value = a.dim_5)
 
 /**************************************************************************************************/
-/* SequenceNo: 61                                                                                 */
-/* Description: FILTER: LUK ut rader fra help_table_1 som har beløp = 0                           */
+/* SequenceNo: 41                                                                                 */
+/* Description: FILTER: LUK ut rader fra HLPGRUNNLAG som har beløp = 0                            */
 /* Type: B                                                                                        */
 /* Commit_flag: N                                                                                 */
 /* Exit_from: S                                                                                   */
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-SELECT b.account ,b.amount ,b.apar_id ,b.apar_type ,b.att_1_id ,b.att_2_id ,b.att_3_id ,b.att_4_id ,b.att_5_id ,b.att_6_id ,b.att_7_id ,b.client ,b.cur_amount ,b.currency ,b.dc_flag ,b.description ,b.dim_1 ,b.dim_2 ,b.dim_3 ,b.dim_4 ,b.dim_5 ,b.dim_6 ,b.dim_7 ,b.ext_arch_ref ,b.ext_inv_ref ,b.ext_ref ,b.number_1 ,b.order_id ,b.period ,b.sequence_no ,b.status ,b.tax_code ,b.tax_system ,b.trans_date ,b.value_1 ,b.value_2 ,b.value_3 ,b.voucher_date ,b.voucher_no ,b.voucher_type ,b.step INTO $*help_table_5 FROM $*help_table_1 b WHERE b.amount=0
+SELECT b.account ,b.amount ,b.apar_id ,b.apar_type ,b.att_1_id ,b.att_2_id ,b.att_3_id ,b.att_4_id ,b.att_5_id ,b.att_6_id ,b.att_7_id ,b.client ,b.cur_amount ,b.currency ,b.dc_flag ,b.description ,b.dim_1 ,b.dim_2 ,b.dim_3 ,b.dim_4 ,b.dim_5 ,b.dim_6 ,b.dim_7 ,b.ext_arch_ref ,b.ext_inv_ref ,b.ext_ref ,b.number_1 ,b.order_id ,b.period ,b.sequence_no ,b.status ,b.tax_code ,b.tax_system ,b.trans_date ,b.value_1 ,b.value_2 ,b.value_3 ,b.voucher_date ,b.voucher_no ,b.voucher_type ,b.step INTO $*HLP03AMT0 FROM $*HLPGRUNNLAG b WHERE b.amount=0
 
 /**************************************************************************************************/
-/* SequenceNo: 62                                                                                 */
-/* Description: FILTER: LUK ut rader fra help_table_1 som har beløp = 0                           */
+/* SequenceNo: 42                                                                                 */
+/* Description: FILTER: LUK ut rader fra HLPGRUNNLAG som har beløp = 0                            */
 /* Type: B                                                                                        */
 /* Commit_flag: N                                                                                 */
 /* Exit_from: S                                                                                   */
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-DELETE FROM $*help_table_1 b WHERE b.amount=0
+DELETE b FROM $*HLPGRUNNLAG b WHERE b.amount=0
 
 /**************************************************************************************************/
-/* SequenceNo: 63                                                                                 */
+/* SequenceNo: 43                                                                                 */
 /* Description: STEP: Oppdater status til 2 for utlukede rader 0-beløp rader                      */
 /* Type: B                                                                                        */
 /* Commit_flag: C                                                                                 */
@@ -165,19 +138,45 @@ DELETE FROM $*help_table_1 b WHERE b.amount=0
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step = 2,dfo_egenfinansiering.last_update=GETDATE() FROM $*help_table_5 WHERE dfo_egenfinansiering.client = $*help_table_5.client AND dfo_egenfinansiering.sequence_no = $*help_table_5.sequence_no AND dfo_egenfinansiering.voucher_no = $*help_table_5.voucher_no
+UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step = 2,dfo_egenfinansiering.last_update=GETDATE() FROM $*HLP03AMT0 WHERE dfo_egenfinansiering.client = $*HLP03AMT0.client AND dfo_egenfinansiering.sequence_no = $*HLP03AMT0.sequence_no AND dfo_egenfinansiering.voucher_no = $*HLP03AMT0.voucher_no
 
 /**************************************************************************************************/
-/* SequenceNo: 70                                                                                 */
-/* Description: DUPLISER OG NEGER: Insert inn i help_table_2 basert på help_table_2 inverter amo  */
-/* Description: unt og samtidig oppdater konto til 9050 egenfinansiering godskrevet               */
+/* SequenceNo: 50                                                                                 */
+/* Description: FORTABELL: Opprett HLPBATCHINPUT fra acrbatchinput, merk at sequence_no er identi */
+/* Description: ty kolonne                                                                        */
 /* Type: B                                                                                        */
 /* Commit_flag: C                                                                                 */
 /* Exit_from: S                                                                                   */
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-INSERT INTO $*help_table_2 ( account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period, tax_code, trans_date, trans_type, voucher_date, voucher_type ) SELECT '9050', amount*-1, batch_id, client, cur_amount*-1, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period, tax_code, trans_date, trans_type, voucher_date, voucher_type FROM $*help_table_2 WHERE 1 = 1
+CREATE TABLE $*HLPBATCHINPUT ( account NVARCHAR(25) NOT NULL, amount DECIMAL(28, 3) NOT NULL, batch_id NVARCHAR(50) NOT NULL, client NVARCHAR(25) NOT NULL, cur_amount DECIMAL(28, 3) NOT NULL, currency NVARCHAR(25) NOT NULL, description NVARCHAR(510) NOT NULL, dim_1 NVARCHAR(25) NOT NULL, dim_2 NVARCHAR(25) NOT NULL, dim_3 NVARCHAR(25) NOT NULL, dim_4 NVARCHAR(25) NOT NULL, dim_5 NVARCHAR(25) NOT NULL, dim_6 NVARCHAR(25) NOT NULL, dim_7 NVARCHAR(25) NOT NULL, ext_inv_ref NVARCHAR(100) NOT NULL, interface NVARCHAR(255) NOT NULL, period INT NOT NULL, sequence_no INT identity, tax_code NVARCHAR(50) NOT NULL DEFAULT '0', trans_date DATETIME NOT NULL DEFAULT(GETDATE()), trans_type NVARCHAR(4) NOT NULL, voucher_date DATETIME NOT NULL DEFAULT(GETDATE()), voucher_type NVARCHAR(50) NOT NULL )
+
+/**************************************************************************************************/
+/* SequenceNo: 60                                                                                 */
+/* Description: BATCHID: Insert aggregert fra HLPGRUNNLAG  inn i $*HLPBATCHINPUT, generer samtidig*/
+/* Description: unik batchid og sett konto til $konto_ef_god egenfinansiering godskrevet, legg og */
+/* Description: voucher_no og sequence_no inn i ext_inv_ref. GODSKRIV DELPROSJEKTET               */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO $*HLPBATCHINPUT ( account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period, tax_code, trans_date, trans_type, voucher_date, voucher_type ) SELECT '$konto_ef_god', amount*-1, CONCAT ('BT','-',convert(VARCHAR, getdate(), 23),convert(VARCHAR, getdate(), 14)), client, cur_amount*-1, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, CONCAT(voucher_no,sequence_no), 'BI', period, '0', trans_date, 'GL', voucher_date, 'P1' FROM $*HLPGRUNNLAG WHERE 1 = 1
+
+/**************************************************************************************************/
+/* SequenceNo: 65                                                                                 */
+/* Description: DUPLISER: Insert inn i HLPBATCHINPUT basert på HLPBATCHINPUT inverter amo         */
+/* Description: unt og samtidig oppdater konto til $konto_ef_bel egenfinansiering belastet BELAST */
+/* Description: BASIS AVREGNING med konteringsregel og verdiforslag.                               */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO $*HLPBATCHINPUT ( account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period, tax_code, trans_date, trans_type, voucher_date, voucher_type ) SELECT '$konto_ef_bel', a.amount, (SELECT TOP 1 batch_id FROM $*HLPBATCHINPUT WHERE 1=1), a.client, a.cur_amount, a.currency, a.description, CASE WHEN a.account IN ('$konto_ls_god','$konto_ls_bel') THEN b.rel_value ELSE a.dim_1 END , a.dim_2, a.dim_3, a.dim_4, a.dim_5, a.dim_6, a.dim_7, CONCAT(a.voucher_no,a.sequence_no), 'BI', a.period, '0', a.trans_date, 'GL', a.voucher_date, 'P1' FROM $*HLPGRUNNLAG a INNER JOIN aglrelvalue b ON (a.client=b.client AND b.attribute_id='BF' AND b.rel_attr_id='C1' AND b.att_value=a.dim_5) WHERE 1 = 1
 
 /**************************************************************************************************/
 /* SequenceNo: 80                                                                                 */
@@ -188,7 +187,7 @@ INSERT INTO $*help_table_2 ( account, amount, batch_id, client, cur_amount, curr
 /* Dialect: ASQL                                                                                  */
 /**************************************************************************************************/
 
-IF SELECT * FROM $*help_table_2
+IF SELECT * FROM $*HLPBATCHINPUT
 
 /**************************************************************************************************/
 /* SequenceNo: 85                                                                                 */
@@ -211,11 +210,11 @@ DEFINE batchid char(50)
 /* Dialect: ASQL                                                                                  */
 /**************************************************************************************************/
 
-SELECT IFNULL(batch_id,'FALSE') INTO :batchid FROM $*help_table_2 WHERE sequence_no=1
+SELECT IFNULL(batch_id,'FALSE') INTO :batchid FROM $*HLPBATCHINPUT WHERE sequence_no=1
 
 /**************************************************************************************************/
 /* SequenceNo: 90                                                                                 */
-/* Description: BESTILL GL07: ACRBATCHINPUT: Insert alt fra help_table_2 inn i acrbatchinput da   */
+/* Description: BESTILL GL07: ACRBATCHINPUT: Insert alt fra HLPBATCHINPUT inn i acrbatchinput da  */
 /* Description: dataen er massert ferdig                                                          */
 /* Type: B                                                                                        */
 /* Commit_flag: N                                                                                 */
@@ -223,7 +222,7 @@ SELECT IFNULL(batch_id,'FALSE') INTO :batchid FROM $*help_table_2 WHERE sequence
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-INSERT INTO acrbatchinput ( account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period,sequence_no, tax_code, trans_date, trans_type, voucher_date, voucher_type ) SELECT account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period,sequence_no, tax_code, trans_date, trans_type, voucher_date, voucher_type FROM $*help_table_2 WHERE 1=1
+INSERT INTO acrbatchinput ( account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period,sequence_no, tax_code, trans_date, trans_type, voucher_date, voucher_type ) SELECT account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period,sequence_no, tax_code, trans_date, trans_type, voucher_date, voucher_type FROM $*HLPBATCHINPUT WHERE 1=1
 
 /**************************************************************************************************/
 /* SequenceNo: 900                                                                                */
@@ -278,7 +277,7 @@ DEFINE periodtopacrbatchline INT
 /* Dialect: ASQL                                                                                  */
 /**************************************************************************************************/
 
-SELECT IFNULL(period,190001) INTO :periodtopacrbatchline FROM $*help_table_2 WHERE sequence_no=1
+SELECT IFNULL(period,190001) INTO :periodtopacrbatchline FROM $*HLPBATCHINPUT WHERE sequence_no=1
 
 /**************************************************************************************************/
 /* SequenceNo: 920                                                                                */
@@ -731,4 +730,4 @@ END IF
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step=2, dfo_egenfinansiering.last_update=GETDATE() FROM $*help_table_1 WHERE dfo_egenfinansiering.client=$*help_table_1.client AND dfo_egenfinansiering.sequence_no=$*help_table_1.sequence_no AND dfo_egenfinansiering.voucher_no=$*help_table_1.voucher_no
+UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step=2, dfo_egenfinansiering.last_update=GETDATE() FROM $*HLPGRUNNLAG WHERE dfo_egenfinansiering.client=$*HLPGRUNNLAG.client AND dfo_egenfinansiering.sequence_no=$*HLPGRUNNLAG.sequence_no AND dfo_egenfinansiering.voucher_no=$*HLPGRUNNLAG.voucher_no
