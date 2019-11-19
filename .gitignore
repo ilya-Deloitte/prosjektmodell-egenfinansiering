@@ -1,0 +1,4 @@
+#Ignore ag16 utility and config
+AG16.exe
+ag16.config
+todo.txt
