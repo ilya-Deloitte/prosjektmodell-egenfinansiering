@@ -1,0 +1,734 @@
+/**************************************************************************************************/
+/* ReportName: ATSEF, UtilityVersion: 0.9.0.0                                                     */
+/**************************************************************************************************/
+/* SequenceNo: 10                                                                                 */
+/* Description: HJELPETABELL: Finn nye rader i triggertabell dfo_egenfinansiering og insert diss  */
+/* Description: e inn i en help_table_1 for videre behandling                                     */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+SELECT * INTO $*help_table_1 FROM dfo_egenfinansiering WHERE client='$client' AND step=0
+
+
+/**************************************************************************************************/
+/* SequenceNo: 11                                                                                 */
+/* Description: STEP: Oppdater status på uthentete rader til 1 (under_arbeid) i dfo_egenfinansie  */
+/* Description: ring for under arbeid                                                             */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+UPDATE dfo_egenfinansiering SET step=1,last_update=GETDATE() WHERE client='$client' AND step=0
+
+
+/**************************************************************************************************/
+/* SequenceNo: 20                                                                                 */
+/* Description: FILTER: Luk ut rader fra help_table_1 som ikke har delprosjekt i dim_5, plasser   */
+/* Description: først i hjelpetabell for å oppdatere status                                       */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+SELECT * INTO $*help_table_3 FROM $*help_table_1 WHERE att_5_id<>'BF' AND dim_5=''
+
+/**************************************************************************************************/
+/* SequenceNo: 21                                                                                 */
+/* Description: FILTER: Luk ut rader fra help_table_1 som ikke har delprosjekt i dim_5, slett fr  */
+/* Description: a help_table_1                                                                    */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+DELETE FROM $*help_table_1 WHERE att_5_id<>'BF' OR dim_5=''
+
+/**************************************************************************************************/
+/* SequenceNo: 22                                                                                 */
+/* Description: STEP: Oppdater status til 2 (fullført) i dfo_egenfinansiering for radene som ble  */
+/* Description:  luket ut grunnet feil verdi i dim_5                                              */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step = 2, dfo_egenfinansiering.last_update=GETDATE() FROM $*help_table_3 WHERE dfo_egenfinansiering.client = $*help_table_3.client AND dfo_egenfinansiering.sequence_no = $*help_table_3.sequence_no AND dfo_egenfinansiering.voucher_no = $*help_table_3.voucher_no
+
+/**************************************************************************************************/
+/* SequenceNo: 30                                                                                 */
+/* Description: FILTER: Luk ut rader fra help_table_1 som ikke har prosjekt av typen bidrag       */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+SELECT b.account ,b.amount ,b.apar_id ,b.apar_type ,b.att_1_id ,b.att_2_id ,b.att_3_id ,b.att_4_id ,b.att_5_id ,b.att_6_id ,b.att_7_id ,b.client ,b.cur_amount ,b.currency ,b.dc_flag ,b.description ,b.dim_1 ,b.dim_2 ,b.dim_3 ,b.dim_4 ,b.dim_5 ,b.dim_6 ,b.dim_7 ,b.ext_arch_ref ,b.ext_inv_ref ,b.ext_ref ,b.number_1 ,b.order_id ,b.period ,b.sequence_no ,b.status ,b.tax_code ,b.tax_system ,b.trans_date ,b.value_1 ,b.value_2 ,b.value_3 ,b.voucher_date ,b.voucher_no ,b.voucher_type ,b.step INTO $*help_table_4 FROM $*help_table_1 b LEFT OUTER JOIN atsproject c ON ( b.client = c.client AND b.dim_2 = c.project ) WHERE c.unit_id NOT LIKE 'B%'
+
+/**************************************************************************************************/
+/* SequenceNo: 31                                                                                 */
+/* Description: FILTER: Luk ut rader fra help_table_1 som ikke har prosjekt av typen bidrag, sle  */
+/* Description: tt fra help_table_1                                                               */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+DELETE FROM $*help_table_1 b INNER JOIN atsproject c ON(b.client=c.client AND b.dim_2=c.project) WHERE c.unit_id NOT LIKE 'B%'
+
+/**************************************************************************************************/
+/* SequenceNo: 32                                                                                 */
+/* Description: STEP: Oppdater status til 2 (fullført) i dfo_egenfinansiering for radene som ble  */
+/* Description:  luket ut grunnet feil prosjekttype på prosjekt i dim_2                           */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step = 2,dfo_egenfinansiering.last_update=GETDATE() FROM $*help_table_4 WHERE dfo_egenfinansiering.client = $*help_table_4.client AND dfo_egenfinansiering.sequence_no = $*help_table_4.sequence_no AND dfo_egenfinansiering.voucher_no = $*help_table_4.voucher_no
+
+/**************************************************************************************************/
+/* SequenceNo: 50                                                                                 */
+/* Description: FORTABELL: Opprett help_table_2 fra acrbatchinput, merk at sequence_no er identi  */
+/* Description: ty kolonne                                                                        */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+CREATE TABLE $*help_table_2 ( account NVARCHAR(25) NOT NULL, amount DECIMAL(28, 3) NOT NULL, batch_id NVARCHAR(50) NOT NULL, client NVARCHAR(25) NOT NULL, cur_amount DECIMAL(28, 3) NOT NULL, currency NVARCHAR(25) NOT NULL, description NVARCHAR(50) NOT NULL, dim_1 NVARCHAR(25) NOT NULL, dim_2 NVARCHAR(25) NOT NULL, dim_3 NVARCHAR(25) NOT NULL, dim_4 NVARCHAR(25) NOT NULL, dim_5 NVARCHAR(25) NOT NULL, dim_6 NVARCHAR(25) NOT NULL, dim_7 NVARCHAR(25) NOT NULL, ext_inv_ref NVARCHAR(100) NOT NULL, interface NVARCHAR(255) NOT NULL, period INT NOT NULL, sequence_no INT identity, tax_code NVARCHAR(50) NOT NULL DEFAULT '0', trans_date DATETIME NOT NULL DEFAULT(GETDATE()), trans_type NVARCHAR(4) NOT NULL, voucher_date DATETIME NOT NULL DEFAULT(GETDATE()), voucher_type NVARCHAR(50) NOT NULL )
+
+/**************************************************************************************************/
+/* SequenceNo: 55                                                                                 */
+/* Description: BATCHID: Insert fra help_table_1  inn i help_table_2, generer samtidig unik batc  */
+/* Description: hid og sett konto til 9150 egenfinansiering belastet, legg og voucher_no og sequ  */
+/* Description: ence_no inn i ext_inv_ref                                                         */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO $*help_table_2 ( account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period, tax_code, trans_date, trans_type, voucher_date, voucher_type ) SELECT '9150', amount, CONCAT ('BT','-',convert(VARCHAR, getdate(), 23),convert(VARCHAR, getdate(), 14)), client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, CONCAT(voucher_no,sequence_no), 'BI', period, '0', trans_date, 'GL', voucher_date, voucher_type FROM $*help_table_1 WHERE 1 = 1
+
+/**************************************************************************************************/
+/* SequenceNo: 60                                                                                 */
+/* Description: BEREGN: FLEX:ANDELSMESSIG&KOSTNADSSPESIFIKK:Oppdater beløp i help_table_2 basert  */
+/* Description:  på beløp i rad og andel i fleksifelt på kontert arbeidsordre                     */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+UPDATE $*help_table_2 SET $*help_table_2.amount=a.amount*b.int_funding_fx/100 FROM $*help_table_2 a INNER JOIN afxwofunding1 b ON(b.client=a.client AND attribute_id='BF' AND b.dim_value = a.dim_5)
+
+/**************************************************************************************************/
+/* SequenceNo: 61                                                                                 */
+/* Description: FILTER: LUK ut rader fra help_table_1 som har beløp = 0                           */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+SELECT b.account ,b.amount ,b.apar_id ,b.apar_type ,b.att_1_id ,b.att_2_id ,b.att_3_id ,b.att_4_id ,b.att_5_id ,b.att_6_id ,b.att_7_id ,b.client ,b.cur_amount ,b.currency ,b.dc_flag ,b.description ,b.dim_1 ,b.dim_2 ,b.dim_3 ,b.dim_4 ,b.dim_5 ,b.dim_6 ,b.dim_7 ,b.ext_arch_ref ,b.ext_inv_ref ,b.ext_ref ,b.number_1 ,b.order_id ,b.period ,b.sequence_no ,b.status ,b.tax_code ,b.tax_system ,b.trans_date ,b.value_1 ,b.value_2 ,b.value_3 ,b.voucher_date ,b.voucher_no ,b.voucher_type ,b.step INTO $*help_table_5 FROM $*help_table_1 b WHERE b.amount=0
+
+/**************************************************************************************************/
+/* SequenceNo: 62                                                                                 */
+/* Description: FILTER: LUK ut rader fra help_table_1 som har beløp = 0                           */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+DELETE FROM $*help_table_1 b WHERE b.amount=0
+
+/**************************************************************************************************/
+/* SequenceNo: 63                                                                                 */
+/* Description: STEP: Oppdater status til 2 for utlukede rader 0-beløp rader                      */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step = 2,dfo_egenfinansiering.last_update=GETDATE() FROM $*help_table_5 WHERE dfo_egenfinansiering.client = $*help_table_5.client AND dfo_egenfinansiering.sequence_no = $*help_table_5.sequence_no AND dfo_egenfinansiering.voucher_no = $*help_table_5.voucher_no
+
+/**************************************************************************************************/
+/* SequenceNo: 70                                                                                 */
+/* Description: DUPLISER OG NEGER: Insert inn i help_table_2 basert på help_table_2 inverter amo  */
+/* Description: unt og samtidig oppdater konto til 9050 egenfinansiering godskrevet               */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO $*help_table_2 ( account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period, tax_code, trans_date, trans_type, voucher_date, voucher_type ) SELECT '9050', amount*-1, batch_id, client, cur_amount*-1, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period, tax_code, trans_date, trans_type, voucher_date, voucher_type FROM $*help_table_2 WHERE 1 = 1
+
+/**************************************************************************************************/
+/* SequenceNo: 80                                                                                 */
+/* Description: BESTILL GL07: IF hjelpetabell har rader i seg, bestill gl07                       */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: ASQL                                                                                  */
+/**************************************************************************************************/
+
+IF SELECT * FROM $*help_table_2
+
+/**************************************************************************************************/
+/* SequenceNo: 85                                                                                 */
+/* Description: BESTILL GL07: Opprett variabel for mellomlagring av batchid                       */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: ASQL                                                                                  */
+/**************************************************************************************************/
+
+DEFINE batchid char(50)
+
+/**************************************************************************************************/
+/* SequenceNo: 86                                                                                 */
+/* Description: BESTILL GL07: Hent ut batch_id ut i variabel :batchid override batchid if not em  */
+/* Description: pty                                                                               */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: ASQL                                                                                  */
+/**************************************************************************************************/
+
+SELECT IFNULL(batch_id,'FALSE') INTO :batchid FROM $*help_table_2 WHERE sequence_no=1
+
+/**************************************************************************************************/
+/* SequenceNo: 90                                                                                 */
+/* Description: BESTILL GL07: ACRBATCHINPUT: Insert alt fra help_table_2 inn i acrbatchinput da   */
+/* Description: dataen er massert ferdig                                                          */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrbatchinput ( account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period,sequence_no, tax_code, trans_date, trans_type, voucher_date, voucher_type ) SELECT account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period,sequence_no, tax_code, trans_date, trans_type, voucher_date, voucher_type FROM $*help_table_2 WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 900                                                                                */
+/* Description: BESTILL GL07: Opprett variabel for mellomlagring av rapportnummer                 */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: ASQL                                                                                  */
+/**************************************************************************************************/
+
+DEFINE gl07ordernumber int
+
+/**************************************************************************************************/
+/* SequenceNo: 905                                                                                */
+/* Description: BESTILL GL07: Hent neste rapportnummer ut i variabel :gl07ordernumber             */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: ASQL                                                                                  */
+/**************************************************************************************************/
+
+SELECT orderno INTO :gl07ordernumber FROM aagreporder WHERE report_name='GL07'
+
+/**************************************************************************************************/
+/* SequenceNo: 906                                                                                */
+/* Description: BESTILL GL07: Inkrementer orderenummer                                            */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+UPDATE aagreporder SET orderno=orderno+1 WHERE report_name ='GL07'
+
+/**************************************************************************************************/
+/* SequenceNo: 910                                                                                */
+/* Description: BESTILL GL07: Opprett variabel for mellomlagring av period $YYMMDD                */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: ASQL                                                                                  */
+/**************************************************************************************************/
+
+DEFINE periodtopacrbatchline INT
+
+/**************************************************************************************************/
+/* SequenceNo: 915                                                                                */
+/* Description: BESTILL GL07: Hent ut periode fra oeverste linje i acrbatch hjelpetabellen        */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: ASQL                                                                                  */
+/**************************************************************************************************/
+
+SELECT IFNULL(period,190001) INTO :periodtopacrbatchline FROM $*help_table_2 WHERE sequence_no=1
+
+/**************************************************************************************************/
+/* SequenceNo: 920                                                                                */
+/* Description: BESTILL GL07: Insert gl07 ordre i acrrepord                                       */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrrepord (expire_days,user_id,invoke_time, report_name,report_id, report_type,report_cols,client,copies,order_date,server_queue,priority_no, printer,status,last_update,orderno,func_arg,description,module,func_id,mail_flag, me_mail_flag,output_id,variant) SELECT 0,'SYSTEM',getdate(),'GL07','gl07', 'B',186,'$client',1,getdate(),'RAPPORT',1,'LOKAL-PRINT','N',getdate(),:gl07ordernumber,'agrbibat', 'GL07','BI',88,0,0,0,2002 WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 930                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord file_name      ''                 */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','file_name',1,'a' ,255, 'Filename','' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 931                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord interface      'BI'               */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','interface',2,'a' ,50,'External system' ,'BI' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 932                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord batch_id       :batchid           */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','batch_id' ,3,'A' ,25,'BatchID' ,:batchid WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 933                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord period         :periodtopacrbatc  */
+/* Description: hline ($YYYYMM)                                                                   */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','period' ,4,'n' ,6, 'Period',:periodtopacrbatchline WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 934                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord post           '1'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','post' ,5,'b' ,1, 'Post','1' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 935                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord vouch_fla      '1'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','vouch_flag' ,6,'b' ,1, 'TransNo assignment','1' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 936                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord trig_stop      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','trig_stop',7,'b' ,1, 'Trigger stop','0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 937                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord compute_t      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','compute_tax',8,'b' ,1, 'Compute tax' ,'0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 938                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord format         '56'               */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','format' ,9,'A' ,6, 'File format' ,'56' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 939                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord agg_trans      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','agg_trans' ,10,'b' ,1, 'Compress','0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 940                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord keep_batc      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','keep_batch',11,'b' ,1, 'Remove file' ,'0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 941                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord agg_apar       '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','agg_apar',12,'b' ,1, 'Compress AR/AP in GL','0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 942                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord max_error      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','max_errors',13,'n' ,6, 'Maximum number of errors','0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 943                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord err_acc        ''                 */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','err_acc' ,14,'A' ,25,'Feilkonto' ,'' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 944                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord trig_chk       '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','trig_chk',15,'b' ,1, 'Trigger check' ,'0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 945                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord query          ''                 */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','query' ,16,'A' ,8, 'Query' ,'' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 946                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord query_par      ''                 */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','query_param1',17,'a' ,30,'Query Parameter 1' ,'' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 947                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord query_par      ''                 */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','query_param2',18,'a' ,30,'Query Parameter 2' ,'' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 948                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord query_par      ''                 */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','query_param3',19,'a' ,30,'Query Parameter 3' ,'' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 949                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord recalc_v2      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','recalc_v2' ,20,'b' ,1, 'Compute Amount3' ,'0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 950                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord recalc_v3      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','recalc_v3' ,21,'b' ,1, 'Compute Amount4' ,'0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 951                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord recalc_am      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','recalc_amt',22,'b' ,1, 'Compute Amount','0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 952                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord company        '*'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','company' ,23,'W' ,25,'Company' ,'*' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 953                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord only_erro      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','only_errors' ,24,'b' ,1, 'Only errors' ,'0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 954                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord start_tps      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','start_tps' ,25,'b' ,1, 'Start AGRTPS','0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 955                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord registrat      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','registration',26,'b' ,1, 'Registration','0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 956                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord asqlflag       '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','asqlflag',27,'b' ,1, 'UBW SQL' ,'0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 957                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord report_fi      'GL07'             */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','report_file' ,28,'A' ,12,'Report file' ,'GL07' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 958                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord max_inv_d      '1'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','max_inv_diff',29,'b' ,1, 'Max.trans.diff','1' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 959                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord seq_no_fl      '1'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','seq_no_flag' ,31,'b' ,1, 'SequenceNo assignment' ,'1' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 960                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord init_ag16      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','init_ag16' ,32,'b' ,1, 'Initial AG16','0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 961                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord chk_vou_d      '2'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','chk_vou_date',33,'A' ,1, 'Check transaction date','2' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 962                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord report_fi      'GL07B'            */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','report_file2',34,'A' ,12,'Warning report','GL07B' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 963                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord mult_vou_      '0' WH             */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','mult_vou_dat',35,'b' ,1, 'Allow multiple transactio' ,'0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 964                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord orphan_ta      '0'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','orphan_tax',36,'b' ,1, 'Allow orphan tax trans.' ,'0' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 965                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord debugging      '4'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','debugging' ,140,'A',1, 'Log Level Parameter' ,'4' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 966                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord tmp_save       '1'                */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','tmp_save',141,'b',1, 'Tmp table parameter','1' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 967                                                                                */
+/* Description: BESTILL GL07: INSERT gl07 parameter i acrparord real_user      '$user_id'         */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,'$client','GL07','real_user' ,200,'A',25,'Real User' ,'$user_id' WHERE 1=1
+
+/**************************************************************************************************/
+/* SequenceNo: 999                                                                                */
+/* Description: BESTILL GL07: End IF seq 80 bestilling av gl07                                    */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: ASQL                                                                                  */
+/**************************************************************************************************/
+
+END IF
+
+/**************************************************************************************************/
+/* SequenceNo: 1000                                                                               */
+/* Description: STEP: Oppdater status til 2 (fullført) i dfo_egenfinansiering for radene som det  */
+/* Description:  ble trigget egenfinansiering på                                                  */
+/* Type: B                                                                                        */
+/* Commit_flag: C                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step=2, dfo_egenfinansiering.last_update=GETDATE() FROM $*help_table_1 WHERE dfo_egenfinansiering.client=$*help_table_1.client AND dfo_egenfinansiering.sequence_no=$*help_table_1.sequence_no AND dfo_egenfinansiering.voucher_no=$*help_table_1.voucher_no
