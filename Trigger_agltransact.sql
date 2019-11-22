@@ -64,7 +64,6 @@ BEGIN
 			,[step]
 			,[last_update]
 			,[user_id]		)
-<<<<<<< HEAD
 SELECT a.account
       ,a.amount
       ,a.apar_id
