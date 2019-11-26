@@ -34,7 +34,7 @@ UPDATE dfo_egenfinansiering SET step=1,last_update=GETDATE() WHERE client='$clie
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-SELECT * INTO $*HLP01DIM5 FROM $*HLPGRUNNLAG WHERE att_5_id<>'BF' AND dim_5=''
+SELECT * INTO $*HLP01DIM5 FROM $*HLPGRUNNLAG WHERE att_5_id<>'BF'
 
 /**************************************************************************************************/
 /* SequenceNo: 21                                                                                 */
@@ -46,7 +46,7 @@ SELECT * INTO $*HLP01DIM5 FROM $*HLPGRUNNLAG WHERE att_5_id<>'BF' AND dim_5=''
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-DELETE FROM $*HLPGRUNNLAG WHERE att_5_id<>'BF' OR dim_5=''
+DELETE FROM $*HLPGRUNNLAG WHERE att_5_id<>'BF'
 
 /**************************************************************************************************/
 /* SequenceNo: 22                                                                                 */
