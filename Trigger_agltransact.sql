@@ -1,16 +1,29 @@
+-- ================================================
+-- Template generated from Template Explorer using:
+-- Create Trigger (New Menu).SQL
+--
+-- Use the Specify Values for Template Parameters 
+-- command (Ctrl-Shift-M) to fill in the parameter 
+-- values below.
+--
+-- See additional Create Trigger templates for more
+-- examples of different Trigger statements.
+--
+-- This block of comments will not be included in
+-- the definition of the function.
+-- ================================================
 USE [AgrBOTT_Utv02]
 GO
-/****** Object:  Trigger [dbo].[dfo_trigger_bott_ef]    Script Date: 19.11.2019 10.58.49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		8-evla
--- Create date: 20.05.2019
--- Description:	Trigging av egenfinansiering
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
 -- =============================================
-ALTER TRIGGER [dbo].[dfo_trigger_bott_ef] 
+CREATE TRIGGER [dbo].[dfo_trigger_bott_ef] 
    ON  [dbo].[agltransact] 
    AFTER INSERT
 AS 
@@ -19,7 +32,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-    -- Insert statements for trigger here
+	-- Insert statements for trigger here
 		INSERT INTO dfo_egenfinansiering
 		(    [account]
 			,[amount]
@@ -112,3 +125,4 @@ SELECT a.account
   INNER JOIN aagsysvalues c ON (c.text1=a.client AND c.name='EGENFIN_TRIGGER_CLIENT' AND c.sys_setup_code='NO')
 
 END
+GO
