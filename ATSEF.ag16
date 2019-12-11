@@ -222,7 +222,7 @@ SELECT IFNULL(batch_id,'FALSE') INTO :batchid FROM $*HLPBATCHINPUT WHERE sequenc
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-INSERT INTO acrbatchinput ( account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period,sequence_no, tax_code, trans_date, trans_type, voucher_date, voucher_type ) SELECT account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period,sequence_no, tax_code, trans_date, trans_type, voucher_date, voucher_type FROM $*HLPBATCHINPUT WHERE 1=1
+INSERT INTO acrbatchinput ( account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period,sequence_no, tax_code, trans_date, trans_type, voucher_date, voucher_type ) SELECT account, amount, batch_id, client, cur_amount, currency, description, dim_1, '', dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period,sequence_no, tax_code, trans_date, trans_type, getdate(), voucher_type FROM $*HLPBATCHINPUT WHERE 1=1
 
 /**************************************************************************************************/
 /* SequenceNo: 900                                                                                */

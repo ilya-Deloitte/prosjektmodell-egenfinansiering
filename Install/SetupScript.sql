@@ -1,4 +1,4 @@
---Kontorelasjoner Det er Ingen triggers på aglrelvalue i UTV02
+--Kontorelasjoner Det er Ingen triggers paa aglrelvalue i UTV02
 BEGIN TRAN
 INSERT [dbo].[aglrelvalue] 
 ([att_val_from], [att_val_to], [att_value], [attribute_id], [client], [date_from], [date_to], [last_update], [percentage], [priority], [rel_attr_id], [rel_id], [rel_value], [user_id], [value_1]) 
