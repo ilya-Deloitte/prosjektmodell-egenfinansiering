@@ -26,4 +26,4 @@ Menypunkt
                         UTV02               - Menybasert tilgang menypunkt ADMINM7                                                                   
                         UTV02               - Egne rapporter AG16 parametere, Kontoparameter for miljøets leiested og egenfinansieringskontoer
 Fast rapport                                                                           
-                        UTV02               - Fast rapport, husk brukeren som den kjøres som må ha tilgang.                                          
+                        UTV02               - Fast rapport, husk at brukeren som den kjøres som må ha tilgang.                                          

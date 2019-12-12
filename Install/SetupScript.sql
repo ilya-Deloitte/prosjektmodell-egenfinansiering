@@ -2,14 +2,42 @@ DECLARE @envclient nvarchar(2) = 'BT';
 BEGIN TRAN
 
 --OPPRETT Kontorelasjonen for egenfinansiering og populer denne for hver konto
-SELECT * FROM agldimension WHERE client='BT' AND attribute_id='Q30'
-SELECT * FROM agldimvalue WHERE client='BT' AND attribute_id='Q30'
-SELECT * FROM aglrelation WHERE client='BT' AND rel_attr_id='Q30'
+--SELECT * FROM agldimension WHERE client='BT' AND attribute_id='Q30'
 
-BEGIN TRAN --SELECT * FROM aglrelvalue WHERE client='BT' AND rel_attr_id='Q30'
+INSERT INTO agldimension (att_name, attribute_id, client, data_length, data_type,description, dim_grp, dim_position, dim_v1_txt, last_update, maintenance,
+period_type, rel_attr_id, related_attr, status, user_id,bflag) 
+ VALUES ('EGENFINKONTO', 'Q30',@envclient,12, 'A', 'Egenfinansiering trigges på kostnad ført på konto', 0, 'X', '', getdate(), 'M', 0, '', '', 'N', '8-evla',2);
+
+INSERT INTO agldescription ( client , attribute_id , dim_value , description , language ) 
+VALUES ( @envclient , 'Q30' , '' , '' , 'NO' ) ;
+
+--SELECT * FROM agldimvalue WHERE client='BT' AND attribute_id='Q30'
+--SELECT * FROM agldescription WHERE client='BT' AND attribute_id='Q30'
+
+INSERT INTO agldescription ( client , attribute_id , dim_value , description , language ) 
+VALUES ( @envclient , 'Q30' , 'JA' , 'Inkluder konto' , 'NO' ) ;
+
+INSERT INTO agldimvalue (description,rel_value,value_1,period_to,status,
+client,last_update,user_id,attribute_id,dim_value,period_from) VALUES ('Inkluder konto',
+'',0.00000000,209999,'N',@envclient,getdate(),'8-evla','Q30','JA',0 );
+
+INSERT INTO agldescription ( client , attribute_id , dim_value , description , language ) 
+VALUES ( @envclient , 'Q30' , 'Nei' , 'Ekskluder konto' , 'NO' ) ;
+
+INSERT INTO agldimvalue (description,rel_value,value_1,period_to,status,
+client,last_update,user_id,attribute_id,dim_value,period_from) VALUES ('ekskluder konto',
+'',0.00000000,209999,'N',@envclient,getdate(),'8-evla','Q30','Nei',0 );
+
+--SELECT * FROM aglrelation WHERE client='BT' AND rel_attr_id='Q30'
+INSERT INTO aglrelation(att_name,attribute_id,bflag, client, dim_v1_txt,
+duplicates,flag,last_update,maintenance,module,period_id,rel_attr_id,related_attr,required,sort_order,user_id,percent_set,rel_grp) 
+VALUES ('KONTO','A0',0,@envclient ,'',0,'W',getdate(),'M','','N','Q30','EGENFINKONTO','V',42,'8-evla',0,'');
+
+--SELECT * FROM aglrelvalue WHERE client='BT' AND rel_attr_id='Q30'
+BEGIN TRAN 
 INSERT [dbo].[aglrelvalue] 
 ([att_val_from], [att_val_to], [att_value], [attribute_id], [client], [date_from], [date_to], [last_update], [percentage], [priority], [rel_attr_id], [rel_id], [rel_value], [user_id], [value_1]) 
-SELECT dim_value, dim_value, dim_value, 'A0  ',@envclient, CAST(N'1900-01-01 00:00:00.000' AS DateTime), CAST(N'2099-12-31 00:00:00.000' AS DateTime), GETDATE(), CAST(100.00000000 AS Decimal(28, 8)), 1, 'Q30 ', NEWID(), 'NEI', '8-evla', CAST(0.00000000 AS Decimal(28, 8))
+SELECT dim_value, dim_value, dim_value, 'A0  ',@envclient, CAST('1900-01-01 00:00:00.000' AS DateTime), CAST('2099-12-31 00:00:00.000' AS DateTime), GETDATE(), CAST(100.00000000 AS Decimal(28, 8)), 1, 'Q30 ', NEWID(), 'NEI', '8-evla', CAST(0.00000000 AS Decimal(28, 8))
 FROM agldimvalue WHERE client=@envclient AND attribute_id='A0'
 
 UPDATE a SET a.rel_value='JA' 
@@ -21,12 +49,103 @@ ROLLBACK
 COMMIT
 
 
---Opprette konteringsregler og konto om de ikke fins, er egentlig Ã¸konomigruppa sit ansvar
-SELECT * FROM aglrules WHERE client='BT' AND account_rule in ('56','61')
-SELECT * FROM aglaccounts WHERE client='BT' AND account IN('9431','9432')
+--Opprette konteringsregler og konto om de ikke fins, er egentlig Okonomigruppa sit ansvar
+--SELECT * FROM aglrules WHERE client='BT' AND account_rule in ('56','61')
+--SELECT * FROM aglaccounts WHERE client='BT' AND account IN('9431','9432')
 
 --Opprette bilagsart
-SELECT * FROM acrvouchtype WHERE client='BT' AND voucher_type='P1'
+--SELECT * FROM acrvouchtype WHERE client='BT' AND voucher_type='P1'
+INSERT INTO agldimvalue ( attribute_id , client , description , dim_value , period_from , period_to , rel_value , status , value_1 , user_id , last_update ) 
+VALUES (  'AX' ,  @envclient ,  'Egenfinansiering BOA' ,  'P1' , 199401 , 209912 ,'' ,  'N' , 0.00000000 ,  '8-evla' , getdate() ) ;
+
+INSERT INTO agldescription ( client , attribute_id , dim_value , description , language ) 
+VALUES (  @envclient ,  'AX' ,  'P1' ,  'Egenfinansiering BOA' ,  'NO' ) ;
+
+INSERT INTO acrvouchtype (description,treat_code,vouch_series,status,client,last_update,user_id,voucher_type) 
+VALUES ( 'Egenfinansiering BOA', 'B*', 'HB', 'P',@envclient,getdate(), '8-evla', 'P1' );
+
+
+USE [AgrBOTT_Utv01]
+GO
+
+/****** Object:  Table [dbo].[dfo_egenfinansiering]    Script Date: 28.11.2019 10.40.38 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[dfo_egenfinansiering](
+	[account] [varchar](25) NOT NULL,
+	[amount] [decimal](28, 3) NOT NULL,
+	[apar_id] [varchar](25) NOT NULL,
+	[apar_type] [char](1) NOT NULL,
+	[att_1_id] [char](4) NOT NULL,
+	[att_2_id] [char](4) NOT NULL,
+	[att_3_id] [char](4) NOT NULL,
+	[att_4_id] [char](4) NOT NULL,
+	[att_5_id] [char](4) NOT NULL,
+	[att_6_id] [char](4) NOT NULL,
+	[att_7_id] [char](4) NOT NULL,
+	[client] [varchar](25) NOT NULL,
+	[cur_amount] [decimal](28, 3) NOT NULL,
+	[currency] [varchar](25) NOT NULL,
+	[dc_flag] [smallint] NOT NULL,
+	[description] [varchar](255) NOT NULL,
+	[dim_1] [varchar](25) NOT NULL,
+	[dim_2] [varchar](25) NOT NULL,
+	[dim_3] [varchar](25) NOT NULL,
+	[dim_4] [varchar](25) NOT NULL,
+	[dim_5] [varchar](25) NOT NULL,
+	[dim_6] [varchar](25) NOT NULL,
+	[dim_7] [varchar](25) NOT NULL,
+	[ext_arch_ref] [varchar](50) NOT NULL,
+	[ext_inv_ref] [varchar](100) NOT NULL,
+	[ext_ref] [varchar](255) NOT NULL,
+	[number_1] [int] NOT NULL,
+	[order_id] [bigint] NOT NULL,
+	[period] [int] NOT NULL,
+	[sequence_no] [int] NOT NULL,
+	[status] [char](1) NOT NULL,
+	[tax_code] [varchar](25) NOT NULL,
+	[tax_system] [varchar](25) NOT NULL,
+	[trans_date] [datetime] NOT NULL,
+	[value_1] [decimal](28, 8) NOT NULL,
+	[value_2] [decimal](28, 3) NOT NULL,
+	[value_3] [decimal](28, 3) NOT NULL,
+	[voucher_date] [datetime] NOT NULL,
+	[voucher_no] [bigint] NOT NULL,
+	[voucher_type] [varchar](25) NOT NULL,
+	[agrtid] [bigint] IDENTITY(1,1) NOT NULL,
+	[step] [tinyint] NOT NULL,
+	[last_update] [datetime] NOT NULL,
+	[user_id] [nvarchar](25) NOT NULL
+) ON [AgrDW]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+--Opprett klientbegrensning
+INSERT INTO aagsysvalues (text1,number1,text2,number2,text3,number3,description,last_update,user_id,sys_setup_code,name,sequence_no) 
+VALUES (''@envclient'',0,'',0,'',0,'BT firmaet benytter egenfinansieringsløsningen for bott',getdate(),'8-evla','NO','EGENFIN_TRIGGER_CLIENT',0 );
+
+-------------------------------------
+-------------------------------------
+--Paste inn triggeren her:
+-------------------------------------
+-------------------------------------
+
+
+-------------------------------------
+-------------------------------------
+--Paste inn ag16 jobben her fra tasks-> generate scripts. 
+-------------------------------------
+-------------------------------------
 
 --Opprett meny punkter
 --SELECT * FROM aagmenu WHERE client='BT' AND menu_id='0163'
@@ -101,10 +220,10 @@ INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,s
 BEGIN TRAN
 
 DECLARE @jobid bigint
-SET @jobid = (SELECT counter from aagcounter WHERE module = N'AG' AND column_name = N'JOB_ID' )
-UPDATE aagcounter SET counter = @jobid + 1 WHERE module = N'AG' AND column_name = N'JOB_ID' ; 
+SET @jobid = (SELECT counter from aagcounter WHERE module = 'AG' AND column_name = 'JOB_ID' )
+UPDATE aagcounter SET counter = @jobid + 1 WHERE module = 'AG' AND column_name = 'JOB_ID' ; 
 
-DELETE FROM aagdistrpar WHERE module= N'01'	AND func_id	= @funcid AND report_variant= 0 AND job_id	= @jobid;
+DELETE FROM aagdistrpar WHERE module= '01'	AND func_id	= @funcid AND report_variant= 0 AND job_id	= @jobid;
 INSERT INTO acrrepschedule (client,copies,description,func_id,func_type,job_id,	last_update,mail_flag,menu_id,module,output_id,printer,priority_no,real_user,report_cols,report_name,server_queue,sys_setup_code,user_id,variant) VALUES (@envclient,0,'ATSEF - Egenfinansiering BOTT',@funcid,@functype,@jobid,getdate(),0,@menuid,'01',0,'LOKAL-PRINT',1,'SYSTEM',132,'ATSEF','RAPPORT','','8-evla',0);
 
 DECLARE @scheduleid bigint
@@ -129,75 +248,6 @@ COMMIT
 SELECT * FROM aagsysvalues WHERE name='EGENFIN_TRIGGER_CLIENT   ' ORDER BY last_update DESC
 
 
-
-USE [AgrBOTT_Utv01]
-GO
-
-/****** Object:  Table [dbo].[dfo_egenfinansiering]    Script Date: 28.11.2019 10.40.38 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-SET ANSI_PADDING ON
-GO
-
-CREATE TABLE [dbo].[dfo_egenfinansiering](
-	[account] [varchar](25) NOT NULL,
-	[amount] [decimal](28, 3) NOT NULL,
-	[apar_id] [varchar](25) NOT NULL,
-	[apar_type] [char](1) NOT NULL,
-	[att_1_id] [char](4) NOT NULL,
-	[att_2_id] [char](4) NOT NULL,
-	[att_3_id] [char](4) NOT NULL,
-	[att_4_id] [char](4) NOT NULL,
-	[att_5_id] [char](4) NOT NULL,
-	[att_6_id] [char](4) NOT NULL,
-	[att_7_id] [char](4) NOT NULL,
-	[client] [varchar](25) NOT NULL,
-	[cur_amount] [decimal](28, 3) NOT NULL,
-	[currency] [varchar](25) NOT NULL,
-	[dc_flag] [smallint] NOT NULL,
-	[description] [varchar](255) NOT NULL,
-	[dim_1] [varchar](25) NOT NULL,
-	[dim_2] [varchar](25) NOT NULL,
-	[dim_3] [varchar](25) NOT NULL,
-	[dim_4] [varchar](25) NOT NULL,
-	[dim_5] [varchar](25) NOT NULL,
-	[dim_6] [varchar](25) NOT NULL,
-	[dim_7] [varchar](25) NOT NULL,
-	[ext_arch_ref] [varchar](50) NOT NULL,
-	[ext_inv_ref] [varchar](100) NOT NULL,
-	[ext_ref] [varchar](255) NOT NULL,
-	[number_1] [int] NOT NULL,
-	[order_id] [bigint] NOT NULL,
-	[period] [int] NOT NULL,
-	[sequence_no] [int] NOT NULL,
-	[status] [char](1) NOT NULL,
-	[tax_code] [varchar](25) NOT NULL,
-	[tax_system] [varchar](25) NOT NULL,
-	[trans_date] [datetime] NOT NULL,
-	[value_1] [decimal](28, 8) NOT NULL,
-	[value_2] [decimal](28, 3) NOT NULL,
-	[value_3] [decimal](28, 3) NOT NULL,
-	[voucher_date] [datetime] NOT NULL,
-	[voucher_no] [bigint] NOT NULL,
-	[voucher_type] [varchar](25) NOT NULL,
-	[agrtid] [bigint] IDENTITY(1,1) NOT NULL,
-	[step] [tinyint] NOT NULL,
-	[last_update] [datetime] NOT NULL,
-	[user_id] [nvarchar](25) NOT NULL
-) ON [AgrDW]
-
-GO
-
-SET ANSI_PADDING OFF
-GO
-
---Paste inn triggeren her:
-
---Paste inn ag16 jobben her fra tasks-> generate scripts. 
 
 
 ROLLBACK
