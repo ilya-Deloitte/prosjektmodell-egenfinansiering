@@ -1,3 +1,4 @@
+DECLARE @envclient nvarchar(2) = 'BT';
 BEGIN TRAN
 
 --OPPRETT Kontorelasjonen for egenfinansiering og populer denne for hver konto
@@ -8,12 +9,12 @@ SELECT * FROM aglrelation WHERE client='BT' AND rel_attr_id='Q30'
 BEGIN TRAN --SELECT * FROM aglrelvalue WHERE client='BT' AND rel_attr_id='Q30'
 INSERT [dbo].[aglrelvalue] 
 ([att_val_from], [att_val_to], [att_value], [attribute_id], [client], [date_from], [date_to], [last_update], [percentage], [priority], [rel_attr_id], [rel_id], [rel_value], [user_id], [value_1]) 
-SELECT dim_value, dim_value, dim_value, 'A0  ','BT', CAST(N'1900-01-01 00:00:00.000' AS DateTime), CAST(N'2099-12-31 00:00:00.000' AS DateTime), GETDATE(), CAST(100.00000000 AS Decimal(28, 8)), 1, 'Q30 ', NEWID(), 'NEI', '8-evla', CAST(0.00000000 AS Decimal(28, 8))
-FROM agldimvalue WHERE client='BT' AND attribute_id='A0'
+SELECT dim_value, dim_value, dim_value, 'A0  ',@envclient, CAST(N'1900-01-01 00:00:00.000' AS DateTime), CAST(N'2099-12-31 00:00:00.000' AS DateTime), GETDATE(), CAST(100.00000000 AS Decimal(28, 8)), 1, 'Q30 ', NEWID(), 'NEI', '8-evla', CAST(0.00000000 AS Decimal(28, 8))
+FROM agldimvalue WHERE client=@envclient AND attribute_id='A0'
 
 UPDATE a SET a.rel_value='JA' 
 FROM aglrelvalue a INNER JOIN agldimvalue b ON(b.client=a.client AND b.dim_value=a.att_value) 
-WHERE a.client='BT' AND a.attribute_id='A0' AND a.rel_attr_id='Q30' and ((CAST(a.att_value AS int) BETWEEN 3910 AND 3919) OR (CAST(a.att_value AS int) BETWEEN 4000 AND 8000) OR a.att_value IN('9010','9110','9020','9120','9040','9140'))
+WHERE a.client=@envclient AND a.attribute_id='A0' AND a.rel_attr_id='Q30' and ((CAST(a.att_value AS int) BETWEEN 3910 AND 3919) OR (CAST(a.att_value AS int) BETWEEN 4000 AND 8000) OR a.att_value IN('9010','9110','9020','9120','9040','9140'))
 
 
 ROLLBACK
@@ -49,7 +50,7 @@ module = '01' AND parent_menu_id=@parentparentmenuid) t )
 INSERT INTO aagmenu (description, bespoke, menu_id_ref, bflag, client, cust_param,
  func_id, parent_menu_id, menu_id, menu_type, module, func_name, func_type 
 , help_id, tree_type, licence_ref, argument, platforms, user_id, variant,
- sequence_no, icon_type) VALUES ( 'BOTT', 1, '', 0, 'BT', '', 0, @parentparentmenuid,
+ sequence_no, icon_type) VALUES ( 'BOTT', 1, '', 0, @envclient, '', 0, @parentparentmenuid,
  @parentmenuid, 1, '01', '', 0, 0, 1, '', '', 0, '8-evla', 0, @parentsequenceno, 0);
 
 DECLARE @sequenceno bigint
@@ -69,7 +70,7 @@ SET @functype = 32
  INSERT INTO aagmenu (description, bespoke, menu_id_ref, bflag, client, cust_param,
  func_id, parent_menu_id, menu_id, menu_type, module, func_name, func_type 
 , help_id, tree_type, licence_ref, argument, platforms, user_id, variant,
- sequence_no, icon_type) VALUES ( 'Egenfinansiering ATSEF ag16', 1, '', 0, 'BT', '', @funcid, @parentmenuid,
+ sequence_no, icon_type) VALUES ( 'Egenfinansiering ATSEF ag16', 1, '', 0, @envclient, '', @funcid, @parentmenuid,
 @menuid, 4, '01', 'ATSEF', @functype, 0, 1, 'ag16', '', 0, '8-evla', 0, @sequenceno, 0);
 
 --Tilgangsstyr bott mappa og menypunktet for atsef.
@@ -104,7 +105,7 @@ SET @jobid = (SELECT counter from aagcounter WHERE module = N'AG' AND column_nam
 UPDATE aagcounter SET counter = @jobid + 1 WHERE module = N'AG' AND column_name = N'JOB_ID' ; 
 
 DELETE FROM aagdistrpar WHERE module= N'01'	AND func_id	= @funcid AND report_variant= 0 AND job_id	= @jobid;
-INSERT INTO acrrepschedule (client,copies,description,func_id,func_type,job_id,	last_update,mail_flag,menu_id,module,output_id,printer,priority_no,real_user,report_cols,report_name,server_queue,sys_setup_code,user_id,variant) VALUES ('BT',0,'ATSEF - Egenfinansiering BOTT',@funcid,@functype,@jobid,getdate(),0,@menuid,'01',0,'LOKAL-PRINT',1,'SYSTEM',132,'ATSEF','RAPPORT','','8-evla',0);
+INSERT INTO acrrepschedule (client,copies,description,func_id,func_type,job_id,	last_update,mail_flag,menu_id,module,output_id,printer,priority_no,real_user,report_cols,report_name,server_queue,sys_setup_code,user_id,variant) VALUES (@envclient,0,'ATSEF - Egenfinansiering BOTT',@funcid,@functype,@jobid,getdate(),0,@menuid,'01',0,'LOKAL-PRINT',1,'SYSTEM',132,'ATSEF','RAPPORT','','8-evla',0);
 
 DECLARE @scheduleid bigint
 SET @scheduleid = (SELECT counter from aagcounter WHERE module = 'CR' AND column_name = 'SCHEDULE_ID')
