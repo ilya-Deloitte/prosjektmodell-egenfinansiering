@@ -6,9 +6,19 @@ Kontorelasjon
                         UTV02               - Populer med JA/NEI begrepsverdier til relasjonsbruk                                                   
                         UTV02               - OPPRETT relasjon på konto, legg til EGENFINKONTO begrepet                                             
                         UTV02               - POPULER relasjonsverdi konto, De som skal ha JA er:3910-3919+4000-8000+9frikjøp, 9leiested,9indirkost 
+Kontoer og konteringsregler
+                        UTV02               - Kontoeer for EF belast og godskriv må eksistere   
                         UTV02               - Konteringsregler på kontoer for EF belast og godskriv 
 Bilagsart                        
-                        UTV02               - Bilagsart P1, må opprettes om den ikke fins                                                                                         
+                        UTV02               - Bilagsart P1, må opprettes om den ikke fins     
+Egendefinert tabell             
+                        UTV02               - Opprett dfo_egenfinansiering    
+Oppsett verdier                                                                                              
+                        UTV02               - Klientbegrense trigger, oppsett verdier.      
+Trigger                                                                           
+                        UTV02               - Trigger                                                                                    
+Egendefinerte querier                                                                                                            
+                        UTV02               - Legge inn AG 16-jobben             
 Menypunkt                                                            
                         UTV02               - Opprette BOTT mappe i egne menyer                                                                      
                         UTV02               - Menybasert tilgang mappe                                                                               
@@ -17,10 +27,3 @@ Menypunkt
                         UTV02               - Egne rapporter AG16 parametere, Kontoparameter for miljøets leiested og egenfinansieringskontoer
 Fast rapport                                                                           
                         UTV02               - Fast rapport, husk brukeren som den kjøres som må ha tilgang.                                          
-Egendefinert tabell             
-                        UTV02               - Opprett dfo_egenfinansiering    
-Trigger                                                                           
-                        UTV02               - Trigger                                                                                                    
-                        UTV02               - Klientbegrense trigger, oppsett verdier.
-Egendefinerte querier                                                                                                            
-                        UTV02               - Legge inn AG 16-jobben                                                                                     
