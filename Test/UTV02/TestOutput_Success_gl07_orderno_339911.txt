@@ -8,17 +8,17 @@
 
         Rapport           : GL07
         Database          : AgrBOTT_Utv02
-        Best.nr           : 339910
+        Best.nr           : 339911
         Variant           : 2002
         Kopier            : 1
         Skriver           : LOKAL-PRINT
         Bruker            : SYSTEM
         Firma             : BT, BT - BOTT
-        Dato              : 20191211 16:06:44
+        Dato              : 20191212 08:40:47
 
         Filename          :  
         External System   : BI 
-        Batchid           : BT-2019-12-1116:06:35:680 
+        Batchid           : BT-2019-12-1208:40:26:103 
         Period            : 201911 
         Post              : 1 
         Transno Assignmen : 1 
@@ -53,40 +53,38 @@
         Allow Orphan Tax  : 0 
         Log Level Paramet : 4 
         Tmp Table Paramet : 1 
-        Real User         : 8-EVLA 
+        Real User         : SYSTEM 
                           : BT 
 
     ********************************************************
     ********************************************************
     ********************************************************
 Rapport : GL07                                                                             BOTT                                                                             Side:        1
-Firma   : BT                                                                             BT - BOTT                                                                                  191211
-Bruker  : SYSTEM                                                                           GL07                                                                                   16:06:44
+Firma   : BT                                                                             BT - BOTT                                                                                  191212
+Bruker  : SYSTEM                                                                           GL07                                                                                   08:40:47
 
                                                                                 AVREGNINGSLISTE BATCH-INPUT
 
 Oppr.kto Per.   Konto    Dim1     Dim2         Dim3         Dim4     Dim5         Dim6     Dim7         Kun/Lev       Bilagstekst                                    AV       Beløp i NOK
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-BILAG 10000096
-9431     201911 9431     13601010 110003                             110003101    99999                               EF-test: Row 1, kostnad på bidragsprosjekt me  0          1 000,00-
-9431     201911 9431     13601010 110003                             110003101    99999                               EF-test: Row 2, negativ kostnad på bidragspro  0          1 000,00
-9431     201911 9431     12600000 110003                             110003101    99999                               EF-test: Row 6 leiested, kostnad på bidragspr  0          1 000,00-
-9431     201911 9431     13601010 110003                             110003101    99999                               EF-test: Row 9 step 2 ferdig, kostnad på bidr  0          1 000,00-
-9432     201911 9432     13601010 120000                             120000100    99999                               EF-test: Row 1, kostnad på bidragsprosjekt me  0          1 000,00
-9432     201911 9432     13601010 120000                             120000100    99999                               EF-test: Row 2, negativ kostnad på bidragspro  0          1 000,00-
-9432     201911 9432     13601010 120000                             120000100    99999                               EF-test: Row 6 leiested, kostnad på bidragspr  0          1 000,00
-9432     201911 9432     13601010 120000                             120000100    99999                               EF-test: Row 9 step 2 ferdig, kostnad på bidr  0          1 000,00
-BILAG 10000097
-9431     201912 9431     13601010 110003                             110003101    99999                               EF-test: Row 8 annen periode, kostnad på bidr  0          1 000,00-
-9432     201912 9432     13601010 120000                             120000100    99999                               EF-test: Row 8 annen periode, kostnad på bidr  0          1 000,00
+BILAG 10000109
+9431     201911 9431     13601010 110003                             110003101    99999                               EF-test: Row 2, kostnad på bidragsprosjekt     0          1 000,00-
+9431     201911 9431     13601010 110003                             110003101    99999                               EF-test: Row 3, negativ kostnad på bidragspro  0          1 000,00
+9431     201911 9431     12600000 110003                             110003101    99999                               EF-test: Row 7, kostnad på bidragsprosjekt fø  0          1 000,00-
+9432     201911 9432     13601010 120000                             120000100    99999                               EF-test: Row 2, kostnad på bidragsprosjekt     0          1 000,00
+9432     201911 9432     13601010 120000                             120000100    99999                               EF-test: Row 3, negativ kostnad på bidragspro  0          1 000,00-
+9432     201911 9432     13601010 120000                             120000100    99999                               EF-test: Row 7, kostnad på bidragsprosjekt fø  0          1 000,00
+BILAG 10000110
+9431     201912 9431     13601010 110003                             110003101    99999                               EF-test: Row 9, kostnad på bidragsprosjekt i   0          1 000,00-
+9432     201912 9432     13601010 120000                             120000100    99999                               EF-test: Row 9, kostnad på bidragsprosjekt i   0          1 000,00
 
 
 
 
 
-                                                                                                                                  SUM debet  beløp :                            5 000,00
-                                                                                                                                  SUM kredit beløp :                            5 000,00
+                                                                                                                                  SUM debet  beløp :                            4 000,00
+                                                                                                                                  SUM kredit beløp :                            4 000,00
                                                                                                                                   -------------------------------------------------------
                                                                                                                                   SUM netto  beløp :                                0,00
                                                                                                                                   =======================================================
