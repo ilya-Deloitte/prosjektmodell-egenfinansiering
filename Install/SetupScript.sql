@@ -1,9 +1,10 @@
 BEGIN TRAN
-DECLARE @database nvarchar(20) = 'agrdemoM7';--'AgrBOTT_Utv02'
-DECLARE @envclient nvarchar(2) = 'NO';
-DECLARE @parentparentmenuid nvarchar(10)='01531';--'501';
-DECLARE @grantroleaccess nvarchar(10)='SUPER';--'ADMINM7';
-DECLARE @userid nvarchar(10)='LAAEVE';--'8-evla';
+DECLARE @database nvarchar(20) = 'AgrBOTT_Utv01';--'AgrBOTT_Utv02';--'agrdemoM7';--
+DECLARE @envclient nvarchar(2) = '72';--'BT';--'NO';
+DECLARE @parentparentmenuid nvarchar(10)='501';--'501';--'01531';--
+DECLARE @grantroleaccess nvarchar(10)='ADMINM7';--'ADMINM7';--'SUPER';
+DECLARE @userid nvarchar(10)='8-evla';--'8-evla';--'LAAEVE';
+--DECLARE @rapportko nvarchar(20)='DEFAULT';--'RAPPORT';
 
 --OPPRETT Kontorelasjonen for egenfinansiering og populer denne for hver konto
 INSERT INTO agldimension (att_name, attribute_id, client, data_length, data_type,description, dim_grp, dim_position, dim_v1_txt, last_update, maintenance, period_type, rel_attr_id, related_attr, status, user_id,bflag) 
@@ -85,7 +86,7 @@ CREATE TABLE [dbo].[dfo_egenfinansiering](
 
 --Opprett klientbegrensning
 INSERT INTO aagsysvalues (text1,number1,text2,number2,text3,number3,description,last_update,user_id,sys_setup_code,name,sequence_no) 
-	VALUES (@envclient,0,'',0,'',0,'BT firmaet benytter egenfinansieringsløsningen for bott',getdate(),@userid,'NO','EGENFIN_TRIGGER_CLIENT',0 );
+	VALUES (@envclient,0,'',0,'',0,'Firmaet benytter egenfinansieringsløsningen for bott',getdate(),@userid,'NO','EGENFIN_TRIGGER_CLIENT',0 );
 
 -------------------------------------
 -------------------------------------
