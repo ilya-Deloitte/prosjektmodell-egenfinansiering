@@ -1,5 +1,5 @@
-DECLARE @envclient nvarchar(2) = 'NO';
-DECLARE @parentparentmenuid nvarchar(10)='01531';
+DECLARE @envclient nvarchar(2) = '72';
+DECLARE @parentparentmenuid nvarchar(10)='0135';
 --Remove account relations Q30
 DELETE FROM agldimension WHERE client=@envclient AND attribute_id='Q30'
 DELETE FROM agldescription WHERE client=@envclient AND attribute_id='Q30'

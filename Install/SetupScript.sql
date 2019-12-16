@@ -2,6 +2,7 @@ BEGIN TRAN
 DECLARE @database nvarchar(20) = 'AgrBOTT_Utv01';--'AgrBOTT_Utv02';--'agrdemoM7';--
 DECLARE @envclient nvarchar(2) = '72';--'BT';--'NO';
 DECLARE @parentparentmenuid nvarchar(10)='501';--'501';--'01531';--
+DECLARE @module nvarchar(10)='50';--'50';--'01';--
 DECLARE @grantroleaccess nvarchar(10)='ADMINM7';--'ADMINM7';--'SUPER';
 DECLARE @userid nvarchar(10)='8-evla';--'8-evla';--'LAAEVE';
 --DECLARE @rapportko nvarchar(20)='DEFAULT';--'RAPPORT';
@@ -26,7 +27,7 @@ INSERT [dbo].[aglrelvalue] ([att_val_from], [att_val_to], [att_value], [attribut
 	FROM agldimvalue WHERE client=@envclient AND attribute_id='A0'
 UPDATE a SET a.rel_value='JA' 
 	FROM aglrelvalue a INNER JOIN agldimvalue b ON(b.client=a.client AND b.dim_value=a.att_value) 
-	WHERE a.client=@envclient AND a.attribute_id='A0' AND a.rel_attr_id='Q30' and ((CAST(a.att_value AS int) BETWEEN 3910 AND 3919) OR (CAST(a.att_value AS int) BETWEEN 4000 AND 8000) OR a.att_value IN('9010','9110','9020','9120','9040','9140'))
+	WHERE a.client=@envclient AND a.attribute_id='A0' AND a.rel_attr_id='Q30' and ((CAST(a.att_value AS int) BETWEEN 3910 AND 3919) OR (CAST(a.att_value AS int) BETWEEN 4000 AND 8000) OR a.att_value IN('9111','9112','9421','9422','9411','9412'))
 
 --Opprette bilagsart
 INSERT INTO agldimvalue ( attribute_id , client , description , dim_value , period_from , period_to , rel_value , status , value_1 , user_id , last_update ) 
@@ -165,20 +166,20 @@ INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], 
 -----------------------------------
 
 --Opprett meny punkter
-DECLARE @parentfuncid bigint = ISNULL((SELECT MAX(func_id)+1 FROM ( SELECT MAX(func_id) as func_id FROM asysmenu WHERE module = '01' UNION SELECT MAX(func_id) as func_id FROM aagmenu WHERE module = '01') t ),0)
-DECLARE @parentmenuid nvarchar(10)= ISNULL((SELECT CONCAT('01',CAST(@parentfuncid as nvarchar(8)))),'')
-DECLARE @parentsequenceno bigint=ISNULL((SELECT MAX(sequence_no)+1 FROM ( SELECT MAX(sequence_no) as sequence_no FROM asysmenu WHERE module = '01' AND parent_menu_id=@parentparentmenuid UNION SELECT MAX(sequence_no) as sequence_no FROM aagmenu WHERE module = '01' AND parent_menu_id=@parentparentmenuid) t ),0)
+DECLARE @parentfuncid bigint = ISNULL((SELECT MAX(func_id)+1 FROM ( SELECT MAX(func_id) as func_id FROM asysmenu WHERE module = @module UNION SELECT MAX(func_id) as func_id FROM aagmenu WHERE module = @module) t ),0)
+DECLARE @parentmenuid nvarchar(10)= ISNULL((SELECT CONCAT(@module,CAST(@parentfuncid as nvarchar(8)))),'')
+DECLARE @parentsequenceno bigint=ISNULL((SELECT MAX(sequence_no)+1 FROM ( SELECT MAX(sequence_no) as sequence_no FROM asysmenu WHERE module = @module AND parent_menu_id=@parentparentmenuid UNION SELECT MAX(sequence_no) as sequence_no FROM aagmenu WHERE module = @module AND parent_menu_id=@parentparentmenuid) t ),0)
 	--Egne menyer, opprette bott mappa. 
 INSERT INTO aagmenu (description, bespoke, menu_id_ref, bflag, client, cust_param, func_id, parent_menu_id, menu_id, menu_type, module, func_name, func_type , help_id, tree_type, licence_ref, argument, platforms, user_id, variant, sequence_no, icon_type) 
-	VALUES ( 'BOTT', 1, '', 0, @envclient, '', @parentfuncid, @parentparentmenuid, @parentmenuid, 1, '01', '', 0, 0, 1, '', '', 0, @userid, 0, @parentsequenceno, 0);
+	VALUES ( 'BOTT', 1, '', 0, @envclient, '', @parentfuncid, @parentparentmenuid, @parentmenuid, 1, @module, '', 0, 0, 1, '', '', 0, '*', 0, @parentsequenceno, 0);
 	--Fetch menu "counters" for child menu
-DECLARE @sequenceno bigint =ISNULL((SELECT MAX(sequence_no)+1 FROM ( SELECT MAX(sequence_no) as sequence_no FROM asysmenu WHERE module = '01' AND parent_menu_id=@parentmenuid UNION SELECT MAX(sequence_no) as sequence_no FROM aagmenu WHERE module = '01' AND parent_menu_id=@parentmenuid) t ),0)
-DECLARE @funcid bigint=ISNULL((SELECT MAX(func_id)+1 FROM ( SELECT MAX(func_id) as func_id FROM asysmenu WHERE module = '01' UNION SELECT MAX(func_id) as func_id FROM aagmenu WHERE module = '01') t ),0)
-DECLARE @menuid nvarchar(10) = ISNULL((SELECT CONCAT('01',CAST(@funcid as nvarchar(8)))),'')
+DECLARE @sequenceno bigint =ISNULL((SELECT MAX(sequence_no)+1 FROM ( SELECT MAX(sequence_no) as sequence_no FROM asysmenu WHERE module = @module AND parent_menu_id=@parentmenuid UNION SELECT MAX(sequence_no) as sequence_no FROM aagmenu WHERE module = @module AND parent_menu_id=@parentmenuid) t ),0)
+DECLARE @funcid bigint=ISNULL((SELECT MAX(func_id)+1 FROM ( SELECT MAX(func_id) as func_id FROM asysmenu WHERE module = @module UNION SELECT MAX(func_id) as func_id FROM aagmenu WHERE module = @module) t ),0)
+DECLARE @menuid nvarchar(10) = ISNULL((SELECT CONCAT(@module,CAST(@funcid as nvarchar(8)))),'')
 DECLARE @functype int = 32
 	--Egne menyer, opprette menypunktet.
 INSERT INTO aagmenu (description, bespoke, menu_id_ref, bflag, client, cust_param, func_id, parent_menu_id, menu_id, menu_type, module, func_name, func_type , help_id, tree_type, licence_ref, argument, platforms, user_id, variant, sequence_no, icon_type) 
-	VALUES ( 'Egenfinansiering ATSEF ag16', 1, '', 0, @envclient, '', @funcid, @parentmenuid, @menuid, 4, '01', 'ATSEF', @functype, 0, 1, 'ag16', '', 0, @userid, 0, @sequenceno, 0);
+	VALUES ( 'Egenfinansiering ATSEF ag16', 1, '', 0, @envclient, '', @funcid, @parentmenuid, @menuid, 4, @module, 'ATSEF', @functype, 0, 1, 'ag16', '', 0, '*', 0, @sequenceno, 8);
 --Tilgangsstyr bott mappa og menypunktet for atsef.
 INSERT INTO aagaccess (bflag, menu_id, role_id, user_id, tree_type, user_stamp,last_update) 
 	VALUES (8, @parentmenuid, @grantroleaccess, '', 1, @userid, getdate());
@@ -187,25 +188,25 @@ INSERT INTO aagaccess (bflag, menu_id, role_id, user_id, tree_type, user_stamp,l
 
 --egne rapporter 
 INSERT INTO aagrepdef(description,priority_no,pwd_check,report_name,report_cols,variant,bespoke,func_id,module,user_id,last_update,mail_flag) 
-	VALUES ('Egenfinansiering ATSEF ag16',0,0,'ATSEF',132,0,1,@funcid,'01',@userid,getdate(),0);
+	VALUES ('Egenfinansiering ATSEF ag16',0,0,'ATSEF',132,0,1,@funcid,@module,@userid,getdate(),0);
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
-	VALUES (1,1,'asqlflag','1','ATSEF',1,'b','ASQL',0,@funcid,'01');
+	VALUES (1,1,'asqlflag','1','ATSEF',1,'b','ASQL',0,@funcid,@module);
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
-	VALUES (1,4,'konto_ls_god','9421','ATSEF',2,'a','Leiestedskonto godskrevet',0,@funcid,'01');
+	VALUES (1,4,'konto_ls_god','9421','ATSEF',2,'a','Leiestedskonto godskrevet',0,@funcid,@module);
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
-	VALUES (1,4,'konto_ls_bel','9422','ATSEF',3,'a','Leiestedskonto belastet',0,@funcid,'01');
+	VALUES (1,4,'konto_ls_bel','9422','ATSEF',3,'a','Leiestedskonto belastet',0,@funcid,@module);
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
-	VALUES (1,4,'konto_ef_god','9431','ATSEF',2,'a','EF konto godskrevet',0,@funcid,'01');
+	VALUES (1,4,'konto_ef_god','9431','ATSEF',2,'a','EF konto godskrevet',0,@funcid,@module);
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
-	VALUES (1,4,'konto_ef_bel','9432','ATSEF',3,'a','EF konto belastet',0,@funcid,'01');
+	VALUES (1,4,'konto_ef_bel','9432','ATSEF',3,'a','EF konto belastet',0,@funcid,@module);
 
 --Sett inn  fast rapport
 DECLARE @jobid bigint = ISNULL( (SELECT counter from aagcounter WHERE module = 'AG' AND column_name = 'JOB_ID' ),0)
 UPDATE aagcounter SET counter = @jobid + 1 WHERE module = 'AG' AND column_name = 'JOB_ID' ; 
-DELETE FROM aagdistrpar WHERE module= '01'	AND func_id	= @funcid AND report_variant= 0 AND job_id	= @jobid;
+DELETE FROM aagdistrpar WHERE module= @module	AND func_id	= @funcid AND report_variant= 0 AND job_id	= @jobid;
 
 INSERT INTO acrrepschedule (client,copies,description,func_id,func_type,job_id,	last_update,mail_flag,menu_id,module,output_id,printer,priority_no,real_user,report_cols,report_name,server_queue,sys_setup_code,user_id,variant) 
-	VALUES (@envclient,0,'ATSEF - Egenfinansiering BOTT',@funcid,@functype,@jobid,getdate(),0,@menuid,'01',0,'LOKAL-PRINT',1,'SYSTEM',132,'ATSEF','RAPPORT','',@userid,0);
+	VALUES (@envclient,0,'ATSEF - Egenfinansiering BOTT',@funcid,@functype,@jobid,getdate(),0,@menuid,@module,0,'LOKAL-PRINT',1,'SYSTEM',132,'ATSEF','RAPPORT','',@userid,0);
 
 DECLARE @scheduleid bigint = ISNULL((SELECT counter from aagcounter WHERE module = 'CR' AND column_name = 'SCHEDULE_ID'),0)
 UPDATE aagcounter SET counter = @scheduleid + 1 WHERE module = 'CR' AND column_name = 'SCHEDULE_ID' ; 

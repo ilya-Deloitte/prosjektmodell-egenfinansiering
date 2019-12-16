@@ -1,0 +1,91 @@
+
+
+    *********************************************************
+    *********************************************************
+    *********************************************************
+
+        GL07
+
+        Rapport           : GL07
+        Database          : AgrBOTT_Utv01
+        Best.nr           : 349137
+        Variant           : 2002
+        Kopier            : 1
+        Skriver           : LOKAL-PRINT
+        Bruker            : SYSTEM
+        Firma             : 72, BOTT fiktivt
+        Dato              : 20191216 15:25:25
+
+        Filename          :  
+        External System   : BI 
+        Batchid           : BT-2019-12-1615:25:15:670 
+        Period            : 201911 
+        Post              : 1 
+        Transno Assignmen : 1 
+        Trigger Stop      : 0 
+        Compute Tax       : 0 
+        File Format       : 56 
+        Compress          : 0 
+        Remove File       : 0 
+        Compress Ar/ap In : 0 
+        Maximum Number Of : 0 
+                          : 9999 
+        Trigger Check     : 0 
+        Query             :  
+        Query Parameter 1 :  
+        Query Parameter 2 :  
+        Query Parameter 3 :  
+        Compute Amount3   : 0 
+        Compute Amount4   : 0 
+        Compute Amount    : 0 
+        Company           : * 
+        Only Errors       : 0 
+        Start Agrtps      : 0 
+        Registration      : 0 
+        Ubw Sql           : 0 
+        Report File       : GL07 
+        Max.trans.diff    : 1 
+        Sequenceno Assign : 1 
+        Initial Ag16      : 0 
+        Check Transaction : 2 
+        Warning Report    : GL07B 
+        Allow Multiple Tr : 0 
+        Allow Orphan Tax  : 0 
+        Log Level Paramet : 4 
+        Tmp Table Paramet : 1 
+        Real User         : SYSTEM 
+                          : 72 
+
+    ********************************************************
+    ********************************************************
+    ********************************************************
+Rapport : GL07                                                                             BOTT                                                                             Side:        1
+Firma   : 72                                                                           BOTT fiktivt                                                                                 191216
+Bruker  : SYSTEM                                                                           GL07                                                                                   15:25:25
+
+                                                                                AVREGNINGSLISTE BATCH-INPUT
+
+Oppr.kto Per.   Konto    Dim1     Dim2         Dim3         Dim4     Dim5         Dim6     Dim7         Kun/Lev       Bilagstekst                                    AV       Beløp i NOK
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+BILAG 10000035
+9431     201911 9431     13601010 110003                             110003101    99999                               EF-test: Row 2, kostnad på bidragsprosjekt     0          1 000,00-
+9431     201911 9431     13601010 110003                             110003101    99999                               EF-test: Row 3, negativ kostnad på bidragspro  0          1 000,00
+9431     201911 9431     12600000 110003                             110003101    99999                               EF-test: Row 7, kostnad på bidragsprosjekt fø  0          1 000,00-
+9432     201911 9432     13601010 120000                             120000100    99999                               EF-test: Row 2, kostnad på bidragsprosjekt     0          1 000,00
+9432     201911 9432     13601010 120000                             120000100    99999                               EF-test: Row 3, negativ kostnad på bidragspro  0          1 000,00-
+9432     201911 9432     13601010 120000                             120000100    99999                               EF-test: Row 7, kostnad på bidragsprosjekt fø  0          1 000,00
+BILAG 10000036
+9431     201912 9431     13601010 110003                             110003101    99999                               EF-test: Row 9, kostnad på bidragsprosjekt i   0          1 000,00-
+9432     201912 9432     13601010 120000                             120000100    99999                               EF-test: Row 9, kostnad på bidragsprosjekt i   0          1 000,00
+
+
+
+
+
+                                                                                                                                  SUM debet  beløp :                            4 000,00
+                                                                                                                                  SUM kredit beløp :                            4 000,00
+                                                                                                                                  -------------------------------------------------------
+                                                                                                                                  SUM netto  beløp :                                0,00
+                                                                                                                                  =======================================================
+
