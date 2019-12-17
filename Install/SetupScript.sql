@@ -27,7 +27,7 @@ INSERT [dbo].[aglrelvalue] ([att_val_from], [att_val_to], [att_value], [attribut
 	FROM agldimvalue WHERE client=@envclient AND attribute_id='A0'
 UPDATE a SET a.rel_value='JA' 
 	FROM aglrelvalue a INNER JOIN agldimvalue b ON(b.client=a.client AND b.dim_value=a.att_value) 
-	WHERE a.client=@envclient AND a.attribute_id='A0' AND a.rel_attr_id='Q30' and ((CAST(a.att_value AS int) BETWEEN 3910 AND 3919) OR (CAST(a.att_value AS int) BETWEEN 4000 AND 8000) OR a.att_value IN('9111','9112','9421','9422','9411','9412'))
+	WHERE a.client=@envclient AND a.attribute_id='A0' AND a.rel_attr_id='Q30' and ((CAST(a.att_value AS int) BETWEEN 3910 AND 3919) OR (CAST(a.att_value AS int) BETWEEN 4000 AND 8000) OR a.att_value IN('9112','9422','9412'))
 
 --Opprette bilagsart
 INSERT INTO agldimvalue ( attribute_id , client , description , dim_value , period_from , period_to , rel_value , status , value_1 , user_id , last_update ) 
