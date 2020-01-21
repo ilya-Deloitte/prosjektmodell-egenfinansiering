@@ -1,5 +1,7 @@
-DECLARE @envclient nvarchar(2) = '72';
-DECLARE @parentparentmenuid nvarchar(10)='0135';
+BEGIN TRAN
+
+DECLARE @envclient nvarchar(2) = 'NO';--'72'; --;
+DECLARE @parentparentmenuid nvarchar(10)='01531';--'0135';--
 --Remove account relations Q30
 DELETE FROM agldimension WHERE client=@envclient AND attribute_id='Q30'
 DELETE FROM agldescription WHERE client=@envclient AND attribute_id='Q30'
@@ -46,3 +48,6 @@ DELETE FROM  acrschedule  WHERE schedule_id IN (SELECT  schedule_id FROM acrsche
 DELETE FROM acrschedjob WHERE schedule_id IN (SELECT schedule_id FROM acrschedjob WHERE job_id=@jobid)
 DELETE FROM acrschedparam WHERE schedule_id IN (SELECT schedule_id FROM acrschedjob WHERE job_id=@jobid)
 DELETE FROM  acrrepschedule  WHERE client=@envclient AND report_name='ATSEF'
+
+ROLLBACK
+COMMIT

@@ -1,15 +1,15 @@
 BEGIN TRAN
-DECLARE @database nvarchar(20) = 'AgrBOTT_Utv01';--'AgrBOTT_Utv02';--'agrdemoM7';--
-DECLARE @envclient nvarchar(2) = '72';--'BT';--'NO';
-DECLARE @parentparentmenuid nvarchar(10)='501';--'501';--'01531';--
-DECLARE @module nvarchar(10)='50';--'50';--'01';--
-DECLARE @grantroleaccess nvarchar(10)='ADMINM7';--'ADMINM7';--'SUPER';
-DECLARE @userid nvarchar(10)='8-evla';--'8-evla';--'LAAEVE';
+DECLARE @database nvarchar(20) = 'agrdemoM7';--'AgrBOTT_Utv01';--'AgrBOTT_Utv02';--
+DECLARE @envclient nvarchar(2) = 'NO';--'72';--'BT';--
+DECLARE @parentparentmenuid nvarchar(10)='01531';--'501';--'501';--
+DECLARE @module nvarchar(10)='01';--'50';--'50';--
+DECLARE @grantroleaccess nvarchar(10)='SYSTEM';--'ADMINM7';--'ADMINM7';--'SUPER';--
+DECLARE @userid nvarchar(10)='LAAEVE';--'8-evla';--'8-evla';--
 --DECLARE @rapportko nvarchar(20)='DEFAULT';--'RAPPORT';
 
 --OPPRETT Kontorelasjonen for egenfinansiering og populer denne for hver konto
 INSERT INTO agldimension (att_name, attribute_id, client, data_length, data_type,description, dim_grp, dim_position, dim_v1_txt, last_update, maintenance, period_type, rel_attr_id, related_attr, status, user_id,bflag) 
-	VALUES ('EGENFINKONTO', 'Q30',@envclient,12, 'A', 'Egenfinansiering trigges på kostnad ført på konto', 0, 'X', '', getdate(), 'M', 0, '', '', 'N', @userid,2);
+	VALUES ('EGENFIN', 'Q30',@envclient,12, 'A', 'Egenfinansiering trigges på kostnad ført på konto', 0, 'X', '', getdate(), 'M', 0, '', '', 'N', @userid,2);
 INSERT INTO agldescription ( client , attribute_id , dim_value , description , language ) 
 	VALUES ( @envclient , 'Q30' , '' , '' , 'NO' ) ;
 INSERT INTO agldescription ( client , attribute_id , dim_value , description , language ) 
@@ -21,7 +21,7 @@ INSERT INTO agldescription ( client , attribute_id , dim_value , description , l
 INSERT INTO agldimvalue (description,rel_value,value_1,period_to,status,client,last_update,user_id,attribute_id,dim_value,period_from) 
 	VALUES ('ekskluder konto','',0.00000000,209999,'N',@envclient,getdate(),@userid,'Q30','Nei',0 );
 INSERT INTO aglrelation(att_name,attribute_id,bflag, client, dim_v1_txt,duplicates,flag,last_update,maintenance,module,period_id,rel_attr_id,related_attr,required,sort_order,user_id,percent_set,rel_grp) 
-	VALUES ('KONTO','A0',0,@envclient ,'',0,'W',getdate(),'M','','N','Q30','EGENFINKONTO','V',42,@userid,0,'');
+	VALUES ('KONTO','A0',0,@envclient ,'',0,'W',getdate(),'M','','N','Q30','EGENFIN','V',42,@userid,0,'');
 INSERT [dbo].[aglrelvalue] ([att_val_from], [att_val_to], [att_value], [attribute_id], [client], [date_from], [date_to], [last_update], [percentage], [priority], [rel_attr_id], [rel_id], [rel_value], [user_id], [value_1]) 
 	SELECT dim_value, dim_value, dim_value, 'A0  ',@envclient, CAST('1900-01-01 00:00:00.000' AS DateTime), CAST('2099-12-31 00:00:00.000' AS DateTime), GETDATE(), CAST(100.00000000 AS Decimal(28, 8)), 1, 'Q30 ', NEWID(), 'NEI', @userid, CAST(0.00000000 AS Decimal(28, 8))
 	FROM agldimvalue WHERE client=@envclient AND attribute_id='A0'
