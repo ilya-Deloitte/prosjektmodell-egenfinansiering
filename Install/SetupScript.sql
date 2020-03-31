@@ -1,11 +1,11 @@
 BEGIN TRAN
-DECLARE @database nvarchar(20) = 'agrdemoM7';--'AgrBOTT_Utv01';--'AgrBOTT_Utv02';--
-DECLARE @envclient nvarchar(2) = 'NO';--'72';--'BT';--
-DECLARE @parentparentmenuid nvarchar(10)='01531';--'501';--'501';--
-DECLARE @module nvarchar(10)='01';--'50';--'50';--
-DECLARE @grantroleaccess nvarchar(10)='SYSTEM';--'ADMINM7';--'ADMINM7';--'SUPER';--
-DECLARE @userid nvarchar(10)='LAAEVE';--'8-evla';--'8-evla';--
---DECLARE @rapportko nvarchar(20)='DEFAULT';--'RAPPORT';
+DECLARE @envclient nvarchar(2) = '72';
+DECLARE @userid nvarchar(10)='8-evla';
+
+DECLARE @grantroleaccess nvarchar(10)='ADMINM7';
+DECLARE @parentmenuid nvarchar(10) = (SELECT menu_id FROM aagmenu where description='Prosjektøkonomi (BOTT)');
+DECLARE @module nvarchar(10)=TRIM((SELECT module FROM aagmenu where description='Prosjektøkonomi (BOTT)'))
+DECLARE @database nvarchar(20) = (select DB_NAME());
 
 --OPPRETT Kontorelasjonen for egenfinansiering og populer denne for hver konto
 INSERT INTO agldimension (att_name, attribute_id, client, data_length, data_type,description, dim_grp, dim_position, dim_v1_txt, last_update, maintenance, period_type, rel_attr_id, related_attr, status, user_id,bflag) 
@@ -108,8 +108,8 @@ INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], 
 INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], [report_name], [sequence_no], [type]) VALUES (N'N', N'BESTILL GL07: INSERT gl07 parameter i acrparord mult_vou_      ''0'' WH', N'S', N'DATABASE INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,''$client'',''GL07'',''mult_vou_dat'',35,''b'' ,1, ''Allow multiple transactio'' ,''0'' WHERE 1=1', N'ATSEF', 963, N'B')
 INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], [report_name], [sequence_no], [type]) VALUES (N'N', N'BESTILL GL07: INSERT gl07 parameter i acrparord orphan_ta      ''0''', N'S', N'DATABASE INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,''$client'',''GL07'',''orphan_tax'',36,''b'' ,1, ''Allow orphan tax trans.'' ,''0'' WHERE 1=1', N'ATSEF', 964, N'B')
 INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], [report_name], [sequence_no], [type]) VALUES (N'C', N'STEP: Oppdater status til 2 (fullført) i dfo_egenfinansiering for radene som detble trigget egenfinansiering på', N'S', N'DATABASE UPDATE dfo_egenfinansiering SET dfo_egenfinansiering.step=2, dfo_egenfinansiering.last_update=GETDATE() FROM $*HLPGRUNNLAG WHERE dfo_egenfinansiering.client=$*HLPGRUNNLAG.client AND dfo_egenfinansiering.sequence_no=$*HLPGRUNNLAG.sequence_no AND dfo_egenfinansiering.voucher_no=$*HLPGRUNNLAG.voucher_no', N'ATSEF', 1000, N'B')
-INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], [report_name], [sequence_no], [type]) VALUES (N'N', N'BESTILL GL07: INSERT gl07 parameter i acrparord debugging      ''4''', N'S', N'DATABASE INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,''$client'',''GL07'',''debugging'' ,140,''A'',1, ''Log Level Parameter'' ,''4'' WHERE 1=1', N'ATSEF', 965, N'B')
-INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], [report_name], [sequence_no], [type]) VALUES (N'N', N'BESTILL GL07: INSERT gl07 parameter i acrparord tmp_save       ''1''', N'S', N'DATABASE INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,''$client'',''GL07'',''tmp_save'',141,''b'',1, ''Tmp table parameter'',''1'' WHERE 1=1', N'ATSEF', 966, N'B')
+INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], [report_name], [sequence_no], [type]) VALUES (N'N', N'BESTILL GL07: INSERT gl07 parameter i acrparord debugging      ''4''', N'S', N'DATABASE INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,''$client'',''GL07'',''debugging'' ,140,''A'',1, ''Log Level Parameter'' ,''1'' WHERE 1=1', N'ATSEF', 965, N'B')
+INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], [report_name], [sequence_no], [type]) VALUES (N'N', N'BESTILL GL07: INSERT gl07 parameter i acrparord tmp_save       ''1''', N'S', N'DATABASE INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,''$client'',''GL07'',''tmp_save'',141,''b'',1, ''Tmp table parameter'',''0'' WHERE 1=1', N'ATSEF', 966, N'B')
 INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], [report_name], [sequence_no], [type]) VALUES (N'C', N'BESTILL GL07: INSERT gl07 parameter i acrparord real_user      ''$user_id''', N'S', N'DATABASE INSERT INTO acrparord(orderno,client,report_name,param_id,sequence_no,text_type,data_length,param_name,param_val) SELECT :gl07ordernumber,''$client'',''GL07'',''real_user'' ,200,''A'',25,''Real User'' ,''$user_id'' WHERE 1=1', N'ATSEF', 967, N'B')
 INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], [report_name], [sequence_no], [type]) VALUES (N'C', N'BESTILL GL07: End IF seq 80 bestilling av gl07', N'S', N'END IF', N'ATSEF', 999, N'B')
 INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], [report_name], [sequence_no], [type]) VALUES (N'N', N'HJELPETABELL: Finn nye rader i triggertabell dfo_egenfinansiering og insert disse inn i en HLPGRUNNLAG for videre behandling', N'S', N'DATABASE SELECT * INTO $*HLPGRUNNLAG FROM dfo_egenfinansiering WHERE client=''$client'' AND step=0', N'ATSEF', 10, N'B')
@@ -164,25 +164,20 @@ INSERT [dbo].[aagbatquery] ([commit_flag], [description], [exit_from], [query], 
 -----------------------------------
 -----------------------------------
 -----------------------------------
+------------------------
 
---Opprett meny punkter
-DECLARE @parentfuncid bigint = ISNULL((SELECT MAX(func_id)+1 FROM ( SELECT MAX(func_id) as func_id FROM asysmenu WHERE module = @module UNION SELECT MAX(func_id) as func_id FROM aagmenu WHERE module = @module) t ),0)
-DECLARE @parentmenuid nvarchar(10)= ISNULL((SELECT CONCAT(@module,CAST(@parentfuncid as nvarchar(8)))),'')
-DECLARE @parentsequenceno bigint=ISNULL((SELECT MAX(sequence_no)+1 FROM ( SELECT MAX(sequence_no) as sequence_no FROM asysmenu WHERE module = @module AND parent_menu_id=@parentparentmenuid UNION SELECT MAX(sequence_no) as sequence_no FROM aagmenu WHERE module = @module AND parent_menu_id=@parentparentmenuid) t ),0)
-	--Egne menyer, opprette bott mappa. 
-INSERT INTO aagmenu (description, bespoke, menu_id_ref, bflag, client, cust_param, func_id, parent_menu_id, menu_id, menu_type, module, func_name, func_type , help_id, tree_type, licence_ref, argument, platforms, user_id, variant, sequence_no, icon_type) 
-	VALUES ( 'BOTT', 1, '', 0, @envclient, '', @parentfuncid, @parentparentmenuid, @parentmenuid, 1, @module, '', 0, 0, 1, '', '', 0, '*', 0, @parentsequenceno, 0);
-	--Fetch menu "counters" for child menu
-DECLARE @sequenceno bigint =ISNULL((SELECT MAX(sequence_no)+1 FROM ( SELECT MAX(sequence_no) as sequence_no FROM asysmenu WHERE module = @module AND parent_menu_id=@parentmenuid UNION SELECT MAX(sequence_no) as sequence_no FROM aagmenu WHERE module = @module AND parent_menu_id=@parentmenuid) t ),0)
+
+--Fetch menu "counters" for child menu
+DECLARE @sequenceno bigint =ISNULL((SELECT ISNULL(MAX(sequence_no),0)+1 FROM ( SELECT ISNULL(MAX(sequence_no),0) as sequence_no FROM asysmenu WHERE module = @module AND parent_menu_id=@parentmenuid UNION SELECT ISNULL(MAX(sequence_no),0) as sequence_no FROM aagmenu WHERE module = @module AND parent_menu_id=@parentmenuid) t ),0)
 DECLARE @funcid bigint=ISNULL((SELECT MAX(func_id)+1 FROM ( SELECT MAX(func_id) as func_id FROM asysmenu WHERE module = @module UNION SELECT MAX(func_id) as func_id FROM aagmenu WHERE module = @module) t ),0)
 DECLARE @menuid nvarchar(10) = ISNULL((SELECT CONCAT(@module,CAST(@funcid as nvarchar(8)))),'')
 DECLARE @functype int = 32
 	--Egne menyer, opprette menypunktet.
 INSERT INTO aagmenu (description, bespoke, menu_id_ref, bflag, client, cust_param, func_id, parent_menu_id, menu_id, menu_type, module, func_name, func_type , help_id, tree_type, licence_ref, argument, platforms, user_id, variant, sequence_no, icon_type) 
-	VALUES ( 'Egenfinansiering ATSEF ag16', 1, '', 0, @envclient, '', @funcid, @parentmenuid, @menuid, 4, @module, 'ATSEF', @functype, 0, 1, 'ag16', '', 0, '*', 0, @sequenceno, 8);
+	VALUES ( 'Egenfinansiering ATSEF ag16', 1, '', 0, '*', '', @funcid, @parentmenuid, @menuid, 4, @module, 'ATSEF', @functype, 0, 1, 'ag16', '', 0, '*', 0, @sequenceno, 3);
+INSERT INTO aagfunction (argument, assembly, attribute_id,bflag, description,func_name, func_type)
+	VALUES('','ag16','',0,'','ATSEF',32)
 --Tilgangsstyr bott mappa og menypunktet for atsef.
-INSERT INTO aagaccess (bflag, menu_id, role_id, user_id, tree_type, user_stamp,last_update) 
-	VALUES (8, @parentmenuid, @grantroleaccess, '', 1, @userid, getdate());
 INSERT INTO aagaccess (bflag, menu_id, role_id, user_id, tree_type, user_stamp,last_update) 
 	VALUES (8, @menuid, @grantroleaccess, '', 1, @userid, getdate());
 
@@ -199,7 +194,9 @@ INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,s
 	VALUES (1,4,'konto_ef_god','9431','ATSEF',2,'a','EF konto godskrevet',0,@funcid,@module);
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
 	VALUES (1,4,'konto_ef_bel','9432','ATSEF',3,'a','EF konto belastet',0,@funcid,@module);
-
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
+	VALUES (0,1,'tmp_save','0','ATSPI',5,'b','Save temp tables dbg',0,@funcid,@module);
+	
 --Sett inn  fast rapport
 DECLARE @jobid bigint = ISNULL( (SELECT counter from aagcounter WHERE module = 'AG' AND column_name = 'JOB_ID' ),0)
 UPDATE aagcounter SET counter = @jobid + 1 WHERE module = 'AG' AND column_name = 'JOB_ID' ; 
@@ -207,12 +204,13 @@ DELETE FROM aagdistrpar WHERE module= @module	AND func_id	= @funcid AND report_v
 
 INSERT INTO acrrepschedule (client,copies,description,func_id,func_type,job_id,	last_update,mail_flag,menu_id,module,output_id,printer,priority_no,real_user,report_cols,report_name,server_queue,sys_setup_code,user_id,variant) 
 	VALUES (@envclient,0,'ATSEF - Egenfinansiering BOTT',@funcid,@functype,@jobid,getdate(),0,@menuid,@module,0,'LOKAL-PRINT',1,'SYSTEM',132,'ATSEF','RAPPORT','',@userid,0);
+---------------
 
 DECLARE @scheduleid bigint = ISNULL((SELECT counter from aagcounter WHERE module = 'CR' AND column_name = 'SCHEDULE_ID'),0)
 UPDATE aagcounter SET counter = @scheduleid + 1 WHERE module = 'CR' AND column_name = 'SCHEDULE_ID' ; 
 
 INSERT INTO acrschedule (end_after ,end_time ,last_update ,sched_type ,schedule_id ,start_time ,user_id )VALUES ( 0,CAST('2099-12-31 00:00:00' AS datetime),CAST('2019-12-12 13:59:35' AS datetime),'agr_daily',@scheduleid, CAST('2019-12-12 00:00:00' AS datetime),@userid);
-INSERT INTO acrschedjob (job_id, job_source, next_time, run_overdue_job, schedule_id, status) VALUES ( @jobid, 'RS',CAST('2019-12-12 14:00:00' AS datetime), 0, @scheduleid, 'N');
+INSERT INTO acrschedjob (job_id, job_source, next_time, run_overdue_job, schedule_id, status) VALUES ( @jobid, 'RS',CAST('2019-12-12 14:00:00' AS datetime), 0, @scheduleid, 'P');
 
 DELETE FROM acrschedparam WHERE schedule_id = @scheduleid;
 INSERT INTO acrschedparam (schedule_id, sequence_no, param_name, param_value) 
@@ -227,6 +225,206 @@ INSERT INTO acrschedparam (schedule_id, sequence_no, param_name, param_value)
 	values (@scheduleid, 4, 'interv_typ', 'minutes');
 INSERT INTO acrschedparam (schedule_id, sequence_no, param_name, param_value) 
 	values (@scheduleid, 5, 'start_date', '20191212 00:00:00');
+
+
+--------GL07 variant 2004
+
+
+
+DECLARE @variant int = 2004;
+DECLARE @userid nvarchar(20) = '8-evla';
+DECLARE @variantdescription nvarchar(255) = 'Bokføring egenfinansiering (2004)';
+
+INSERT INTO aagrepdef(description,expire_days,priority_no,pwd_check,report_name,
+report_cols,variant,bespoke,func_id,module,mail_flag,printer,output_id,copies,
+user_id,last_update,server_queue) VALUES (@variantdescription,0,1,0,N'GL07',  
+186,@variant,0,88,N'BI',0,N'DEFAULT',0,1,@userid,getdate(),N'DEFAULT');
+
+INSERT INTO aagrepclients(client,func_id,module,report_name,variant)VALUES 
+(N'*',88,N'BI',N'GL07',@variant);
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (0,255,N'file_name',N'',N'GL07',1,N'a',getdate(),N'Filnavn',@variant,
+@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (0,50,N'interface',N'BI',N'GL07',2,N'a',getdate(),N'Forsystem',@variant,
+@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (0,25,N'batch_id',N'',N'GL07',3,N'A',getdate(),N'Buntnummer',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (0,6,N'period',N'',N'GL07',4,N'n',getdate(),N'Periode',@variant,
+@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (0,1,N'post',N'1',N'GL07',5,N'b',getdate(),N'Bokfør',@variant,@userid,
+88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'vouch_flag',N'1',N'GL07',6,N'b',getdate(),N'Bilagsnummer tildeles',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'trig_stop',N'0',N'GL07',7,N'b',getdate(),N'Triggerstopp',@variant,
+@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'compute_tax',N'0',N'GL07',8,N'b',getdate(),N'Beregne avgift',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,6,N'format',N'',N'GL07',9,N'A',getdate(),N'Filformat',@variant,@userid,
+88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'agg_trans',N'0',N'GL07',10,N'b',getdate(),N'Komprimer',@variant,
+@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'keep_batch',N'0',N'GL07',11,N'b',getdate(),N'Fjern fil',@variant,
+@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'agg_apar',N'0',N'GL07',12,N'b',getdate(),N'Kompr. reskontro motpost',@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,6,N'max_errors',N'0',N'GL07',13,N'n',getdate(),N'Maks antall feil',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'trig_chk',N'0',N'GL07',15,N'b',getdate(),N'Triggersjekk',@variant,
+@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,8,N'query',N'',N'GL07',16,N'A',getdate(),N'Query',@variant,@userid,
+88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,30,N'query_param1',N'',N'GL07',17,N'a',getdate(),N'Query Parameter 
+1',@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,30,N'query_param2',N'',N'GL07',18,N'a',getdate(),N'Query Parameter 
+2',@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,30,N'query_param3',N'',N'GL07',19,N'a',getdate(),N'Query Parameter 
+3',@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'recalc_v2',N'0',N'GL07',20,N'b',getdate(),N'Beregn Beløp3',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'recalc_v3',N'0',N'GL07',21,N'b',getdate(),N'Beregn Beløp4',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'recalc_amt',N'0',N'GL07',22,N'b',getdate(),N'Beregn beløp',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,25,N'company',N'*',N'GL07',23,N'W',getdate(),N'Firma',@variant,@userid,
+88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'only_errors',N'1',N'GL07',24,N'b',getdate(),N'Kun feil',@variant,
+@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'start_tps',N'0',N'GL07',25,N'b',getdate(),N'Starte AGRTPS?',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (0,1,N'registration',N'0',N'GL07',26,N'b',getdate(),N'Mottaksregistrering',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'asqlflag',N'0',N'GL07',27,N'b',getdate(),N'Business World 
+SQL',@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,12,N'report_file',N'GL07',N'GL07',28,N'A',getdate(),N'Rapportfil',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'max_inv_diff',N'0',N'GL07',29,N'b',getdate(),N'Maks.bilagsdiff',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'seq_no_flag',N'1',N'GL07',31,N'b',getdate(),N'Sekvensnr-tildeling',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'init_ag16',N'0',N'GL07',32,N'b',getdate(),N'Start AG16',@variant,
+@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'chk_vou_date',N'2',N'GL07',33,N'A',getdate(),N'Kontroller 
+bilagsdato',@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,12,N'report_file2',N'GL07B',N'GL07',34,N'A',getdate(),N'Varslingsrapport',
+@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'mult_vou_dat',N'0',N'GL07',35,N'b',getdate(),N'Tillat flere transaksjons',@variant,@userid,88,N'BI');
+
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,1,N'orphan_tax',N'0',N'GL07',36,N'b',getdate(),N'Tillat frittst. avg.trans',@variant,@userid,88,N'BI');
+
+-----------------------
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,6,N'err_acc',N'',N'GL07',101,N'A',getdate(),N'Feilkonto',
+@variant,@userid,88,N'BI');
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,6,N'debugging',N'1',N'GL07',102,N'A',getdate(),N'Debugging',
+@variant,@userid,88,N'BI');
+INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
+sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
+VALUES (1,6,N'tmp_save',N'0',N'GL07',103,N'b',getdate(),N'Lagre tmp tabeller',
+@variant,@userid,88,N'BI');
+-----------------------
+
 
 ROLLBACK
 COMMIT

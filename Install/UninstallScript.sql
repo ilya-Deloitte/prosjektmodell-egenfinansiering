@@ -49,5 +49,13 @@ DELETE FROM acrschedjob WHERE schedule_id IN (SELECT schedule_id FROM acrschedjo
 DELETE FROM acrschedparam WHERE schedule_id IN (SELECT schedule_id FROM acrschedjob WHERE job_id=@jobid)
 DELETE FROM  acrrepschedule  WHERE client=@envclient AND report_name='ATSEF'
 
+
+
+
+DECLARE @variant int = 2004;
+DELETE FROM aagrepdef WHERE report_name='GL07' AND variant = @variant
+DELETE FROM aagrepclients  WHERE report_name='GL07' AND variant = @variant
+DELETE FROM aagreppardef  WHERE report_name='GL07' AND variant = @variant
+
 ROLLBACK
 COMMIT
