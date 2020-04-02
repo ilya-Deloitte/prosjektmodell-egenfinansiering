@@ -187,15 +187,15 @@ INSERT INTO aagrepdef(description,priority_no,pwd_check,report_name,report_cols,
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
 	VALUES (1,1,'asqlflag','1','ATSEF',1,'b','ASQL',0,@funcid,@module);
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
-	VALUES (1,4,'konto_ls_god','9421','ATSEF',2,'a','Leiestedskonto godskrevet',0,@funcid,@module);
+	VALUES (1,4,'konto_ls_god','9431','ATSEF',2,'a','Leiestedskonto godskrevet',0,@funcid,@module);
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
-	VALUES (1,4,'konto_ls_bel','9422','ATSEF',3,'a','Leiestedskonto belastet',0,@funcid,@module);
+	VALUES (1,4,'konto_ls_bel','9432','ATSEF',3,'a','Leiestedskonto belastet',0,@funcid,@module);
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
-	VALUES (1,4,'konto_ef_god','9431','ATSEF',2,'a','EF konto godskrevet',0,@funcid,@module);
+	VALUES (1,4,'konto_ef_god','9421','ATSEF',4,'a','EF konto godskrevet',0,@funcid,@module);
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
-	VALUES (1,4,'konto_ef_bel','9432','ATSEF',3,'a','EF konto belastet',0,@funcid,@module);
+	VALUES (1,4,'konto_ef_bel','9422','ATSEF',5,'a','EF konto belastet',0,@funcid,@module);
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,sequence_no,text_type,title,variant,func_id,module) 
-	VALUES (0,1,'tmp_save','0','ATSPI',5,'b','Save temp tables dbg',0,@funcid,@module);
+	VALUES (0,1,'tmp_save','0','ATSPI',6,'b','Save temp tables dbg',0,@funcid,@module);
 	
 --Sett inn  fast rapport
 DECLARE @jobid bigint = ISNULL( (SELECT counter from aagcounter WHERE module = 'AG' AND column_name = 'JOB_ID' ),0)
