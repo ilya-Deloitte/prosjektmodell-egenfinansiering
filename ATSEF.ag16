@@ -22,7 +22,7 @@ SELECT * INTO $*HLPGRUNNLAG FROM dfo_egenfinansiering WHERE client='$client' AND
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-UPDATE dfo_egenfinansiering SET step=1,last_update=GETDATE() WHERE client='$client' AND step=0
+UPDATE dfo_egenfinansiering SET step = 1, last_update = GETDATE() WHERE client = '$client' AND step = 0
 
 /**************************************************************************************************/
 /* SequenceNo: 20                                                                                 */
