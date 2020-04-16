@@ -109,6 +109,18 @@ UPDATE a SET a.amount=a.amount*b.own_funding_fx/100, a.cur_amount=a.cur_amount*b
 
 /**************************************************************************************************/
 /* SequenceNo: 41                                                                                 */
+/* Description: BEREGN: FLEX:ANDELSMESSIG&KOSTNADSSPESIFIKK:Oppdater beløp til 0 i $*HLPGRUNNLAG  */
+/* Description: dersom delprosjekt mangler i fleksifelt (NULL)                                    */
+/* Type: B                                                                                        */
+/* Commit_flag: N                                                                                 */
+/* Exit_from: S                                                                                   */
+/* Dialect: Native                                                                                */
+/**************************************************************************************************/
+
+UPDATE a SET a.amount = 0, a.cur_amount = 0 FROM $*HLPGRUNNLAG a WHERE NOT EXISTS (SELECT 1 FROM afxaoegenfin b WHERE b.client = a.client AND b.attribute_id = 'BF' AND b.dim_value = a.dim_5 )
+
+/**************************************************************************************************/
+/* SequenceNo: 45                                                                                 */
 /* Description: FILTER: LUK ut rader fra HLPGRUNNLAG som har beløp = 0                            */
 /* Type: B                                                                                        */
 /* Commit_flag: N                                                                                 */
@@ -119,7 +131,7 @@ UPDATE a SET a.amount=a.amount*b.own_funding_fx/100, a.cur_amount=a.cur_amount*b
 SELECT b.account ,b.amount ,b.apar_id ,b.apar_type ,b.att_1_id ,b.att_2_id ,b.att_3_id ,b.att_4_id ,b.att_5_id ,b.att_6_id ,b.att_7_id ,b.client ,b.cur_amount ,b.currency ,b.dc_flag ,b.description ,b.dim_1 ,b.dim_2 ,b.dim_3 ,b.dim_4 ,b.dim_5 ,b.dim_6 ,b.dim_7 ,b.ext_arch_ref ,b.ext_inv_ref ,b.ext_ref ,b.number_1 ,b.order_id ,b.period ,b.sequence_no ,b.status ,b.tax_code ,b.tax_system ,b.trans_date ,b.value_1 ,b.value_2 ,b.value_3 ,b.voucher_date ,b.voucher_no ,b.voucher_type ,b.step INTO $*HLP03AMT0 FROM $*HLPGRUNNLAG b WHERE b.amount=0
 
 /**************************************************************************************************/
-/* SequenceNo: 42                                                                                 */
+/* SequenceNo: 46                                                                                 */
 /* Description: FILTER: LUK ut rader fra HLPGRUNNLAG som har beløp = 0                            */
 /* Type: B                                                                                        */
 /* Commit_flag: N                                                                                 */
@@ -130,7 +142,7 @@ SELECT b.account ,b.amount ,b.apar_id ,b.apar_type ,b.att_1_id ,b.att_2_id ,b.at
 DELETE b FROM $*HLPGRUNNLAG b WHERE b.amount=0
 
 /**************************************************************************************************/
-/* SequenceNo: 43                                                                                 */
+/* SequenceNo: 47                                                                                 */
 /* Description: STEP: Oppdater status til 2 for utlukede rader 0-beløp rader                      */
 /* Type: B                                                                                        */
 /* Commit_flag: C                                                                                 */
