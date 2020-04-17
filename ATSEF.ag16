@@ -189,7 +189,6 @@ INSERT INTO $*HLPBATCHINPUT ( account, amount, batch_id, client, cur_amount, cur
 /**************************************************************************************************/
 
 INSERT INTO $*HLPBATCHINPUT ( account, amount, batch_id, client, cur_amount, currency, description, dim_1, dim_2, dim_3, dim_4, dim_5, dim_6, dim_7, ext_inv_ref, interface, period, tax_code, trans_date, trans_type, voucher_date, voucher_type ) SELECT '$konto_ef_bel', a.amount, ( SELECT TOP 1 batch_id FROM $*HLPBATCHINPUT WHERE 1 = 1 ), a.client, a.cur_amount, a.currency, 'Egenfinansiering BOA belastet', CASE WHEN a.account IN ('$konto_ls_god', '$konto_ls_bel') THEN b.rel_value ELSE a.dim_1 END, a.dim_2, a.dim_3, a.dim_4, a.dim_5, a.dim_6, a.dim_7, CONCAT ( a.voucher_no, a.sequence_no ), 'BI', a.period, '0', a.trans_date, 'GL', a.voucher_date, 'P1' FROM $*HLPGRUNNLAG a INNER JOIN aglrelvalue b ON ( a.client = b.client AND b.attribute_id = 'BF' AND b.rel_attr_id = 'C1' AND b.att_value = a.dim_5 ) WHERE 1 = 1
-
 /**************************************************************************************************/
 /* SequenceNo: 80                                                                                 */
 /* Description: BESTILL GL07: IF hjelpetabell har rader i seg, bestill gl07                       */
