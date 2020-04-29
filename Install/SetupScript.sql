@@ -245,38 +245,31 @@ INSERT INTO aagrepclients(client,func_id,module,report_name,variant)VALUES
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (0,255,N'file_name',N'',N'GL07',1,N'a',getdate(),N'Filnavn',@variant,
-@userid,88,N'BI');
+VALUES (0,255,N'file_name',N'',N'GL07',1,N'a',getdate(),N'Filnavn',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (0,50,N'interface',N'BI',N'GL07',2,N'a',getdate(),N'Forsystem',@variant,
-@userid,88,N'BI');
+VALUES (0,50,N'interface',N'BI',N'GL07',2,N'a',getdate(),N'Forsystem',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (0,25,N'batch_id',N'',N'GL07',3,N'A',getdate(),N'Buntnummer',
-@variant,@userid,88,N'BI');
+VALUES (0,25,N'batch_id',N'',N'GL07',3,N'A',getdate(),N'Buntnummer',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (0,6,N'period',N'',N'GL07',4,N'n',getdate(),N'Periode',@variant,
-@userid,88,N'BI');
+VALUES (0,6,N'period',N'',N'GL07',4,N'n',getdate(),N'Periode',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (0,1,N'post',N'1',N'GL07',5,N'b',getdate(),N'Bokfør',@variant,@userid,
-88,N'BI');
+VALUES (0,1,N'post',N'1',N'GL07',5,N'b',getdate(),N'Bokfør',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'vouch_flag',N'1',N'GL07',6,N'b',getdate(),N'Bilagsnummer tildeles',
-@variant,@userid,88,N'BI');
+VALUES (1,1,N'vouch_flag',N'1',N'GL07',6,N'b',getdate(),N'Bilagsnummer tildeles',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'trig_stop',N'0',N'GL07',7,N'b',getdate(),N'Triggerstopp',@variant,
-@userid,88,N'BI');
+VALUES (1,1,N'trig_stop',N'0',N'GL07',7,N'b',getdate(),N'Triggerstopp',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
@@ -285,18 +278,15 @@ VALUES (1,1,N'compute_tax',N'0',N'GL07',8,N'b',getdate(),N'Beregne avgift',
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,6,N'format',N'',N'GL07',9,N'A',getdate(),N'Filformat',@variant,@userid,
-88,N'BI');
+VALUES (1,6,N'format',N'',N'GL07',9,N'A',getdate(),N'Filformat',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'agg_trans',N'0',N'GL07',10,N'b',getdate(),N'Komprimer',@variant,
-@userid,88,N'BI');
+VALUES (1,1,N'agg_trans',N'0',N'GL07',10,N'b',getdate(),N'Komprimer',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'keep_batch',N'0',N'GL07',11,N'b',getdate(),N'Fjern fil',@variant,
-@userid,88,N'BI');
+VALUES (1,1,N'keep_batch',N'0',N'GL07',11,N'b',getdate(),N'Fjern fil',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
@@ -304,103 +294,83 @@ VALUES (1,1,N'agg_apar',N'0',N'GL07',12,N'b',getdate(),N'Kompr. reskontro motpos
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,6,N'max_errors',N'0',N'GL07',13,N'n',getdate(),N'Maks antall feil',
-@variant,@userid,88,N'BI');
+VALUES (1,6,N'max_errors',N'0',N'GL07',13,N'n',getdate(),N'Maks antall feil',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'trig_chk',N'0',N'GL07',15,N'b',getdate(),N'Triggersjekk',@variant,
-@userid,88,N'BI');
+VALUES (1,1,N'trig_chk',N'0',N'GL07',15,N'b',getdate(),N'Triggersjekk',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,8,N'query',N'',N'GL07',16,N'A',getdate(),N'Query',@variant,@userid,
-88,N'BI');
+VALUES (1,8,N'query',N'',N'GL07',16,N'A',getdate(),N'Query',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,30,N'query_param1',N'',N'GL07',17,N'a',getdate(),N'Query Parameter 
-1',@variant,@userid,88,N'BI');
+VALUES (1,30,N'query_param1',N'',N'GL07',17,N'a',getdate(),N'Query Parameter 1',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,30,N'query_param2',N'',N'GL07',18,N'a',getdate(),N'Query Parameter 
-2',@variant,@userid,88,N'BI');
+VALUES (1,30,N'query_param2',N'',N'GL07',18,N'a',getdate(),N'Query Parameter 2',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,30,N'query_param3',N'',N'GL07',19,N'a',getdate(),N'Query Parameter 
-3',@variant,@userid,88,N'BI');
+VALUES (1,30,N'query_param3',N'',N'GL07',19,N'a',getdate(),N'Query Parameter 3',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'recalc_v2',N'0',N'GL07',20,N'b',getdate(),N'Beregn Beløp3',
-@variant,@userid,88,N'BI');
+VALUES (1,1,N'recalc_v2',N'0',N'GL07',20,N'b',getdate(),N'Beregn Beløp3',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'recalc_v3',N'0',N'GL07',21,N'b',getdate(),N'Beregn Beløp4',
-@variant,@userid,88,N'BI');
+VALUES (1,1,N'recalc_v3',N'0',N'GL07',21,N'b',getdate(),N'Beregn Beløp4',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'recalc_amt',N'0',N'GL07',22,N'b',getdate(),N'Beregn beløp',
-@variant,@userid,88,N'BI');
+VALUES (1,1,N'recalc_amt',N'0',N'GL07',22,N'b',getdate(),N'Beregn beløp',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,25,N'company',N'*',N'GL07',23,N'W',getdate(),N'Firma',@variant,@userid,
-88,N'BI');
+VALUES (1,25,N'company',N'*',N'GL07',23,N'W',getdate(),N'Firma',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'only_errors',N'1',N'GL07',24,N'b',getdate(),N'Kun feil',@variant,
-@userid,88,N'BI');
+VALUES (1,1,N'only_errors',N'1',N'GL07',24,N'b',getdate(),N'Kun feil',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'start_tps',N'0',N'GL07',25,N'b',getdate(),N'Starte AGRTPS?',
-@variant,@userid,88,N'BI');
+VALUES (1,1,N'start_tps',N'0',N'GL07',25,N'b',getdate(),N'Starte AGRTPS?',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (0,1,N'registration',N'0',N'GL07',26,N'b',getdate(),N'Mottaksregistrering',
-@variant,@userid,88,N'BI');
+VALUES (0,1,N'registration',N'0',N'GL07',26,N'b',getdate(),N'Mottaksregistrering',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'asqlflag',N'0',N'GL07',27,N'b',getdate(),N'Business World 
-SQL',@variant,@userid,88,N'BI');
+VALUES (1,1,N'asqlflag',N'0',N'GL07',27,N'b',getdate(),N'Business World SQL',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,12,N'report_file',N'GL07',N'GL07',28,N'A',getdate(),N'Rapportfil',
-@variant,@userid,88,N'BI');
+VALUES (1,12,N'report_file',N'GL07',N'GL07',28,N'A',getdate(),N'Rapportfil',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'max_inv_diff',N'0',N'GL07',29,N'b',getdate(),N'Maks.bilagsdiff',
-@variant,@userid,88,N'BI');
+VALUES (1,1,N'max_inv_diff',N'0',N'GL07',29,N'b',getdate(),N'Maks.bilagsdiff',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'seq_no_flag',N'1',N'GL07',31,N'b',getdate(),N'Sekvensnr-tildeling',
-@variant,@userid,88,N'BI');
+VALUES (1,1,N'seq_no_flag',N'1',N'GL07',31,N'b',getdate(),N'Sekvensnr-tildeling',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'init_ag16',N'0',N'GL07',32,N'b',getdate(),N'Start AG16',@variant,
-@userid,88,N'BI');
+VALUES (1,1,N'init_ag16',N'0',N'GL07',32,N'b',getdate(),N'Start AG16',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,1,N'chk_vou_date',N'2',N'GL07',33,N'A',getdate(),N'Kontroller 
-bilagsdato',@variant,@userid,88,N'BI');
+VALUES (1,1,N'chk_vou_date',N'2',N'GL07',33,N'A',getdate(),N'Kontroller bilagsdato',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,12,N'report_file2',N'GL07B',N'GL07',34,N'A',getdate(),N'Varslingsrapport',
-@variant,@userid,88,N'BI');
+VALUES (1,12,N'report_file2',N'GL07B',N'GL07',34,N'A',getdate(),N'Varslingsrapport',@variant,@userid,88,N'BI');
 
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
@@ -413,16 +383,13 @@ VALUES (1,1,N'orphan_tax',N'0',N'GL07',36,N'b',getdate(),N'Tillat frittst. avg.t
 -----------------------
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,6,N'err_acc',N'',N'GL07',101,N'A',getdate(),N'Feilkonto',
-@variant,@userid,88,N'BI');
+VALUES (1,6,N'err_acc',N'',N'GL07',101,N'A',getdate(),N'Feilkonto',@variant,@userid,88,N'BI');
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,6,N'debugging',N'1',N'GL07',102,N'A',getdate(),N'Debugging',
-@variant,@userid,88,N'BI');
+VALUES (1,6,N'debugging',N'1',N'GL07',102,N'A',getdate(),N'Debugging',@variant,@userid,88,N'BI');
 INSERT INTO aagreppardef(fixed_flag,data_length,param_id,param_def,report_name,
 sequence_no,text_type,last_update,title,variant,user_id,func_id,module) 
-VALUES (1,6,N'tmp_save',N'0',N'GL07',103,N'b',getdate(),N'Lagre tmp tabeller',
-@variant,@userid,88,N'BI');
+VALUES (1,6,N'tmp_save',N'0',N'GL07',103,N'b',getdate(),N'Lagre tmp tabeller',@variant,@userid,88,N'BI');
 -----------------------
 
 
