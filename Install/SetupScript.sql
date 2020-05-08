@@ -4,7 +4,7 @@ DECLARE @userid nvarchar(10)='1100VSE';
 
 DECLARE @grantroleaccess nvarchar(10)='ADMINM7';
 DECLARE @parentmenuid nvarchar(10) = (SELECT menu_id FROM aagmenu where description='Prosjektøkonomi (BOTT)');
-DECLARE @module nvarchar(10)=TRIM((SELECT module FROM aagmenu where description='Prosjektøkonomi (BOTT)'))
+DECLARE @module nvarchar(10)=RTRIM((SELECT module FROM aagmenu where description='Prosjektøkonomi (BOTT)'))
 DECLARE @database nvarchar(20) = (select DB_NAME());
 
 --OPPRETT Kontorelasjonen for egenfinansiering og populer denne for hver konto
