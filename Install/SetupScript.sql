@@ -453,6 +453,14 @@ INSERT INTO agldimension (att_name, attribute_id, client, data_length, data_type
 	VALUES ('EGENFIN', 'Q30',@envclient,12, 'A', 'Egenfinansiering trigges på kostnad ført på konto', 0, 'X', '', getdate(), 'M', 0, '', '', 'N', @userid,2);
 INSERT INTO agldescription ( client , attribute_id , dim_value , description , language ) 
 	VALUES ( @envclient , 'Q30' , '' , '' , 'NO' ) ;
+
+INSERT INTO agldimvalue ( attribute_id , client , description , dim_value, period_from , period_to , rel_value , status , value_1 , user_id , last_update )  
+	VALUES ('AS', @envclient, 'EGENFIN', 'Q30', 0, 209912, '', 'N', 0.00000000, @userid, getdate());
+INSERT INTO agldescription ( client , attribute_id , dim_value , description , language ) 
+	VALUES ( @envclient, 'AS' , 'Q30' , 'EGENFIN' , 'NO' ) ;
+
+INSERT INTO agldescription ( client , attribute_id , dim_value , description , language ) 
+	VALUES ( @envclient , 'Q30' , '' , '' , 'NO' ) ;
 INSERT INTO agldescription ( client , attribute_id , dim_value , description , language ) 
 	VALUES ( @envclient , 'Q30' , 'JA' , 'Inkluder konto' , 'NO' ) ;
 INSERT INTO agldimvalue (description,rel_value,value_1,period_to,status,client,last_update,user_id,attribute_id,dim_value,period_from) 
@@ -493,7 +501,7 @@ INSERT INTO acrvouchtype (description,treat_code,vouch_series,status,client,last
 
 --Opprett klientbegrensning
 INSERT INTO aagsysvalues (text1,number1,text2,number2,text3,number3,description,last_update,user_id,sys_setup_code,name,sequence_no) 
-	VALUES (@envclient,0,'',0,'',0,'Firmaet benytter egenfinansieringsløsningen for bott',getdate(),@userid,'NO','EGENFIN_TRIGGER_CLIENT',0 );
+	VALUES (@envclient,0,'',0,'',0,'Firmaet benytter egenfinansieringsløsningen for bott',getdate(),@userid,'NO','EGENFIN_TRIGGER_CLIENT', ISNULL((select max(sequence_no) + 1 from aagsysvalues where name = 'EGENFIN_TRIGGER_CLIENT'),1));
 
 
 
