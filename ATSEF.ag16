@@ -278,7 +278,7 @@ UPDATE aagreporder SET orderno=orderno+1 WHERE report_name ='GL07'
 /* Dialect: Native                                                                                */
 /**************************************************************************************************/
 
-INSERT INTO acrrepord (expire_days,user_id,invoke_time, report_name,report_id, report_type,report_cols,client,copies,order_date,server_queue,priority_no, printer,status,last_update,orderno,func_arg,description,module,func_id,mail_flag, me_mail_flag,output_id,variant) SELECT 0,'SYSTEM',getdate(),'GL07','gl07', 'B',186,'$client',1,getdate(),'RAPPORT',1,'LOKAL-PRINT','N',getdate(),:gl07ordernumber,'agrbibat', 'GL07','BI',88,0,0,0,2004 WHERE 1=1
+INSERT INTO acrrepord (expire_days,user_id,invoke_time, report_name,report_id, report_type,report_cols,client,copies,order_date,server_queue,priority_no, printer,status,last_update,orderno,func_arg,description,module,func_id,mail_flag, me_mail_flag,output_id,variant) SELECT 0,'R.RAPP',getdate(),'GL07','gl07', 'B',186,'$client',1,getdate(),'RAPPORT',1,'LOKAL-PRINT','N',getdate(),:gl07ordernumber,'agrbibat', 'GL07','BI',88,0,0,0,2004 WHERE 1=1
 
 /**************************************************************************************************/
 /* SequenceNo: 925                                                                                */
